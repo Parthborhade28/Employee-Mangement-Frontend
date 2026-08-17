@@ -43,3 +43,7 @@ export const getProfile = async () => {
     return response.data;
 
 };
+export const register = async (registerData) => {
+  const response = await API.post("/auth/register", registerData);
+  return response.data;
+};
