@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import {
   Drawer,
   Toolbar,
@@ -9,6 +11,7 @@ import {
   Typography,
   Box,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
@@ -20,17 +23,46 @@ import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
 
 import { NavLink, useNavigate } from "react-router-dom";
 
+import { getProfile } from "../services/authService";
+
 const drawerWidth = 250;
 
 function Sidebar() {
   const navigate = useNavigate();
 
+  const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadRole();
+  }, []);
+
+  const loadRole = async () => {
+    try {
+      setLoading(true);
+
+      const profile = await getProfile();
+
+      setRole(profile.role);
+    } catch (error) {
+      console.error("Unable to load user role:", error);
+
+      // If the token is invalid/expired,
+      // send the user back to login.
+      localStorage.removeItem("token");
+      navigate("/");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
+
     navigate("/");
   };
 
-  const menuItems = [
+  const adminMenuItems = [
     {
       text: "Dashboard",
       icon: <DashboardRoundedIcon />,
@@ -53,6 +85,24 @@ function Sidebar() {
     },
   ];
 
+  const userMenuItems = [
+    {
+      text: "My Dashboard",
+      icon: <DashboardRoundedIcon />,
+      path: "/dashboard",
+    },
+    {
+      text: "My Profile",
+      icon: <AccountCircleRoundedIcon />,
+      path: "/profile",
+    },
+  ];
+
+  const menuItems =
+    role === "ADMIN"
+      ? adminMenuItems
+      : userMenuItems;
+
   return (
     <Drawer
       variant="permanent"
@@ -63,32 +113,19 @@ function Sidebar() {
         "& .MuiDrawer-paper": {
           width: drawerWidth,
           boxSizing: "border-box",
-
           bgcolor: "#ffffff",
-
           borderRight: "1px solid #e5e7eb",
-
-          height: "100vh",
-
           display: "flex",
-          flexDirection: "column",
           justifyContent: "space-between",
-
-          overflowX: "hidden",
         },
       }}
     >
-      {/* ================= TOP SECTION ================= */}
+      {/* ================= TOP ================= */}
 
       <Box>
         {/* Logo */}
 
-        <Toolbar
-          sx={{
-            minHeight: "80px !important",
-            px: 2.5,
-          }}
-        >
+        <Toolbar>
           <Box
             sx={{
               display: "flex",
@@ -107,9 +144,6 @@ function Sidebar() {
               <Typography
                 variant="h6"
                 fontWeight="bold"
-                sx={{
-                  lineHeight: 1.2,
-                }}
               >
                 EMS PRO
               </Typography>
@@ -128,122 +162,91 @@ function Sidebar() {
 
         {/* Navigation */}
 
-        <List
-          sx={{
-            px: 1.5,
-            py: 2,
-          }}
-        >
-          {menuItems.map((item) => (
-            <ListItem
-              key={item.text}
-              disablePadding
+        <List sx={{ p: 2 }}>
+          {loading ? (
+            <Box
               sx={{
-                mb: 1,
+                display: "flex",
+                justifyContent: "center",
+                py: 3,
               }}
             >
-              <ListItemButton
-                component={NavLink}
-                to={item.path}
+              <CircularProgress size={24} />
+            </Box>
+          ) : (
+            menuItems.map((item) => (
+              <ListItem
+                key={item.text}
+                disablePadding
                 sx={{
-                  minHeight: 48,
+                  mb: 1,
+                }}
+              >
+                <ListItemButton
+                  component={NavLink}
+                  to={item.path}
+                  sx={{
+                    borderRadius: 3,
 
-                  borderRadius: 3,
-
-                  px: 2,
-
-                  color: "#374151",
-
-                  transition: "all 0.2s ease",
-
-                  "& .MuiListItemIcon-root": {
-                    minWidth: 42,
-                    color: "#6b7280",
-                  },
-
-                  "&.active": {
-                    bgcolor: "#1976d2",
-                    color: "#ffffff",
-
-                    "& .MuiListItemIcon-root": {
+                    "&.active": {
+                      bgcolor: "#1976d2",
                       color: "#ffffff",
+
+                      "& .MuiListItemIcon-root": {
+                        color: "#ffffff",
+                      },
                     },
 
                     "&:hover": {
-                      bgcolor: "#1565c0",
+                      bgcolor: "#1976d2",
+                      color: "#ffffff",
+
+                      "& .MuiListItemIcon-root": {
+                        color: "#ffffff",
+                      },
                     },
-                  },
-
-                  "&:hover": {
-                    bgcolor: "#eaf2ff",
-                    color: "#1976d2",
-
-                    "& .MuiListItemIcon-root": {
-                      color: "#1976d2",
-                    },
-                  },
-                }}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-
-                <ListItemText
-                  primary={item.text}
-                  primaryTypographyProps={{
-                    fontWeight: 600,
-                    fontSize: "0.95rem",
                   }}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
+                >
+                  <ListItemIcon>
+                    {item.icon}
+                  </ListItemIcon>
+
+                  <ListItemText
+                    primary={item.text}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))
+          )}
         </List>
       </Box>
 
-      {/* ================= BOTTOM SECTION ================= */}
+      {/* ================= LOGOUT ================= */}
 
-      <Box
-        sx={{
-          p: 1.5,
-        }}
-      >
-        <Divider
-          sx={{
-            mb: 1.5,
-          }}
-        />
+      <Box sx={{ p: 2 }}>
+        <Divider sx={{ mb: 2 }} />
 
         <ListItem disablePadding>
           <ListItemButton
             onClick={handleLogout}
             sx={{
-              minHeight: 48,
-
               borderRadius: 3,
-
               color: "#d32f2f",
-
-              px: 2,
-
-              "& .MuiListItemIcon-root": {
-                minWidth: 42,
-                color: "#d32f2f",
-              },
 
               "&:hover": {
                 bgcolor: "#ffebee",
               },
             }}
           >
-            <ListItemIcon>
+            <ListItemIcon
+              sx={{
+                color: "#d32f2f",
+              }}
+            >
               <LogoutRoundedIcon />
             </ListItemIcon>
 
-            <ListItemText
-              primary="Logout"
-              primaryTypographyProps={{
-                fontWeight: 600,
-              }}
-            />
+            <ListItemText primary="Logout" />
           </ListItemButton>
         </ListItem>
       </Box>

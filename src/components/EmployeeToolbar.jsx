@@ -20,6 +20,7 @@ function EmployeeToolbar({
   onExportExcel,
   onExportPdf,
   onImportEmployees,
+  isAdmin = false,
 }) {
   const buttonStyle = {
     height: 44,
@@ -32,7 +33,6 @@ function EmployeeToolbar({
 
   return (
     <Box sx={{ mb: 3 }}>
-
       {/* =====================================================
           HEADER
       ===================================================== */}
@@ -71,20 +71,24 @@ function EmployeeToolbar({
           </Typography>
         </Box>
 
-        {/* Add Employee */}
+        {/* =================================================
+            ADD EMPLOYEE - ADMIN ONLY
+        ================================================= */}
 
-        <Button
-          variant="contained"
-          startIcon={<PersonAddAlt1RoundedIcon />}
-          onClick={onAddEmployee}
-          sx={{
-            ...buttonStyle,
-            flexShrink: 0,
-            px: 2.5,
-          }}
-        >
-          Add Employee
-        </Button>
+        {isAdmin && (
+          <Button
+            variant="contained"
+            startIcon={<PersonAddAlt1RoundedIcon />}
+            onClick={onAddEmployee}
+            sx={{
+              ...buttonStyle,
+              flexShrink: 0,
+              px: 2.5,
+            }}
+          >
+            Add Employee
+          </Button>
+        )}
       </Box>
 
       {/* =====================================================
@@ -99,14 +103,15 @@ function EmployeeToolbar({
           width: "100%",
         }}
       >
-
         {/* Search */}
 
         <TextField
           fullWidth
           placeholder="Search employee by name..."
           value={search}
-          onChange={(e) => onSearch(e.target.value)}
+          onChange={(e) =>
+            onSearch(e.target.value)
+          }
           sx={{
             flex: 1,
 
@@ -134,72 +139,83 @@ function EmployeeToolbar({
           }}
         />
 
-        {/* Action Buttons */}
+        {/* =================================================
+            ADMIN ACTIONS
+        ================================================= */}
 
-        <Stack
-          direction="row"
-          spacing={1.2}
-          sx={{
-            flexShrink: 0,
-          }}
-        >
-
-          {/* Hidden CSV input */}
-
-          <input
-            type="file"
-            accept=".csv"
-            id="employee-csv-upload"
-            style={{ display: "none" }}
-            onChange={(e) => {
-              const file = e.target.files[0];
-
-              if (file) {
-                onImportEmployees(file);
-              }
-
-              e.target.value = "";
+        {isAdmin && (
+          <Stack
+            direction="row"
+            spacing={1.2}
+            sx={{
+              flexShrink: 0,
             }}
-          />
-
-          {/* Import */}
-
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<UploadFileRoundedIcon />}
-            component="label"
-            htmlFor="employee-csv-upload"
-            sx={buttonStyle}
           >
-            Import CSV
-          </Button>
+            {/* Hidden CSV input */}
 
-          {/* Excel */}
+            <input
+              type="file"
+              accept=".csv"
+              id="employee-csv-upload"
+              style={{
+                display: "none",
+              }}
+              onChange={(e) => {
+                const file =
+                  e.target.files[0];
 
-          <Button
-            variant="outlined"
-            color="success"
-            startIcon={<TableViewRoundedIcon />}
-            onClick={onExportExcel}
-            sx={buttonStyle}
-          >
-            Excel
-          </Button>
+                if (file) {
+                  onImportEmployees(file);
+                }
 
-          {/* PDF */}
+                e.target.value = "";
+              }}
+            />
 
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<PictureAsPdfRoundedIcon />}
-            onClick={onExportPdf}
-            sx={buttonStyle}
-          >
-            PDF
-          </Button>
+            {/* Import CSV */}
 
-        </Stack>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={
+                <UploadFileRoundedIcon />
+              }
+              component="label"
+              htmlFor="employee-csv-upload"
+              sx={buttonStyle}
+            >
+              Import CSV
+            </Button>
+
+            {/* Excel */}
+
+            <Button
+              variant="outlined"
+              color="success"
+              startIcon={
+                <TableViewRoundedIcon />
+              }
+              onClick={onExportExcel}
+              sx={buttonStyle}
+            >
+              Excel
+            </Button>
+
+            {/* PDF */}
+
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={
+                <PictureAsPdfRoundedIcon />
+              }
+              onClick={onExportPdf}
+              sx={buttonStyle}
+            >
+              PDF
+            </Button>
+          </Stack>
+        )}
       </Box>
     </Box>
   );

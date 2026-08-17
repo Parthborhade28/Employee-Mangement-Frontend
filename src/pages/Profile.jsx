@@ -18,6 +18,9 @@ import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
 import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
+import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
+import CurrencyRupeeRoundedIcon from "@mui/icons-material/CurrencyRupeeRounded";
+import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -42,7 +45,50 @@ function Profile() {
     }
   };
 
-  /* ================= LOADING ================= */
+  // =====================================================
+  // FORMAT SALARY
+  // =====================================================
+
+  const formatSalary = (salary) => {
+    if (
+      salary === null ||
+      salary === undefined ||
+      salary === ""
+    ) {
+      return "Not available";
+    }
+
+    return `₹${Number(salary).toLocaleString("en-IN")}`;
+  };
+
+  // =====================================================
+  // FORMAT DATE
+  // =====================================================
+
+  const formatDate = (date) => {
+    if (!date) {
+      return "Not available";
+    }
+
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return date;
+    }
+
+    return parsedDate.toLocaleDateString(
+      "en-IN",
+      {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }
+    );
+  };
+
+  // =====================================================
+  // LOADING
+  // =====================================================
 
   if (!profile) {
     return (
@@ -81,7 +127,63 @@ function Profile() {
     );
   }
 
-  /* ================= PROFILE ================= */
+  // =====================================================
+  // INFORMATION ITEM
+  // =====================================================
+
+  const informationItems = [
+    {
+      label: "Full Name",
+      value: profile.name || "Not available",
+      icon: <PersonRoundedIcon color="primary" />,
+    },
+    {
+      label: "Email",
+      value: profile.email || "Not available",
+      icon: <EmailRoundedIcon color="primary" />,
+    },
+    {
+      label: "Role",
+      value: profile.role || "Not available",
+      icon: (
+        <AdminPanelSettingsRoundedIcon
+          color="primary"
+        />
+      ),
+    },
+    {
+      label: "Department",
+      value:
+        profile.department || "Not assigned",
+      icon: (
+        <BusinessRoundedIcon color="primary" />
+      ),
+    },
+    {
+      label: "Salary",
+      value: formatSalary(profile.salary),
+      icon: (
+        <CurrencyRupeeRoundedIcon
+          color="primary"
+        />
+      ),
+    },
+    {
+      label: "Joining Date",
+      value: formatDate(
+        profile.joiningDate
+      ),
+      icon: (
+        <CalendarMonthRoundedIcon
+          color="primary"
+        />
+      ),
+    },
+  ];
+
+  // =====================================================
+  // PROFILE PAGE
+  // =====================================================
 
   return (
     <Box
@@ -129,12 +231,16 @@ function Profile() {
             },
           }}
         >
-          {/* Back Button */}
+          {/* ================= BACK BUTTON ================= */}
 
           <Button
             variant="outlined"
-            startIcon={<ArrowBackRoundedIcon />}
-            onClick={() => navigate("/dashboard")}
+            startIcon={
+              <ArrowBackRoundedIcon />
+            }
+            onClick={() =>
+              navigate("/dashboard")
+            }
             sx={{
               mb: 3,
               borderRadius: 3,
@@ -145,7 +251,7 @@ function Profile() {
             Back to Dashboard
           </Button>
 
-          {/* Page Heading */}
+          {/* ================= HEADING ================= */}
 
           <Box sx={{ mb: 3 }}>
             <Typography
@@ -164,18 +270,20 @@ function Profile() {
                 mt: 0.5,
               }}
             >
-              View your account information and role details.
+              View your account and employee
+              information.
             </Typography>
           </Box>
 
-          {/* Profile Card */}
+          {/* ================= PROFILE CARD ================= */}
 
           <Card
             sx={{
               width: "100%",
-              maxWidth: 950,
+              maxWidth: 1000,
               borderRadius: 4,
-              border: "1px solid #e5e7eb",
+              border:
+                "1px solid #e5e7eb",
               boxShadow:
                 "0 4px 20px rgba(0, 0, 0, 0.04)",
             }}
@@ -189,15 +297,18 @@ function Profile() {
                 },
               }}
             >
-              {/* Profile Header */}
+              {/* ================= PROFILE HEADER ================= */}
 
               <Box
-                display="flex"
-                alignItems="center"
-                gap={3}
-                flexWrap="wrap"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 3,
+                  flexWrap: "wrap",
+                }}
               >
                 <Avatar
+                  src={profile.profileImage || undefined}
                   sx={{
                     width: 110,
                     height: 110,
@@ -206,9 +317,10 @@ function Profile() {
                     fontWeight: 500,
                   }}
                 >
-                  {profile.name
-                    ?.charAt(0)
-                    .toUpperCase()}
+                  {!profile.profileImage &&
+                    profile.name
+                      ?.charAt(0)
+                      .toUpperCase()}
                 </Avatar>
 
                 <Box>
@@ -219,8 +331,21 @@ function Profile() {
                     {profile.name}
                   </Typography>
 
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      mt: 0.5,
+                    }}
+                  >
+                    {profile.email}
+                  </Typography>
+
                   <Chip
-                    label={profile.role}
+                    label={
+                      profile.role === "ADMIN"
+                        ? "Administrator"
+                        : "Employee"
+                    }
                     color="primary"
                     sx={{
                       mt: 1.5,
@@ -232,116 +357,94 @@ function Profile() {
 
               <Divider sx={{ my: 4 }} />
 
-              {/* Profile Information */}
+              {/* ================= INFORMATION ================= */}
 
-              <Grid container spacing={3}>
-                {/* Full Name */}
+              <Typography
+                variant="h6"
+                fontWeight={700}
+                sx={{
+                  mb: 2.5,
+                  color: "#111827",
+                }}
+              >
+                Account Information
+              </Typography>
 
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 2,
-                      p: 2.5,
-                      borderRadius: 3,
-                      bgcolor: "#f8fafc",
-                    }}
-                  >
-                    <PersonRoundedIcon
-                      color="primary"
-                    />
-
-                    <Box>
-                      <Typography
-                        color="text.secondary"
-                        variant="body2"
-                      >
-                        Full Name
-                      </Typography>
-
-                      <Typography
-                        fontWeight={600}
-                        sx={{ mt: 0.5 }}
-                      >
-                        {profile.name}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Grid>
-
-                {/* Email */}
-
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 2,
-                      p: 2.5,
-                      borderRadius: 3,
-                      bgcolor: "#f8fafc",
-                    }}
-                  >
-                    <EmailRoundedIcon
-                      color="primary"
-                    />
-
-                    <Box>
-                      <Typography
-                        color="text.secondary"
-                        variant="body2"
-                      >
-                        Email
-                      </Typography>
-
-                      <Typography
-                        fontWeight={600}
+              <Grid
+                container
+                spacing={2.5}
+              >
+                {informationItems.map(
+                  (item) => (
+                    <Grid
+                      key={item.label}
+                      size={{
+                        xs: 12,
+                        sm: 6,
+                      }}
+                    >
+                      <Box
                         sx={{
-                          mt: 0.5,
-                          wordBreak: "break-word",
+                          display: "flex",
+                          alignItems:
+                            "flex-start",
+                          gap: 2,
+                          p: 2.5,
+                          minHeight: 80,
+                          borderRadius: 3,
+                          bgcolor:
+                            "#f8fafc",
+                          border:
+                            "1px solid #edf0f4",
+                          boxSizing:
+                            "border-box",
                         }}
                       >
-                        {profile.email}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Grid>
+                        <Box
+                          sx={{
+                            width: 42,
+                            height: 42,
+                            minWidth: 42,
+                            borderRadius: 2.5,
+                            bgcolor:
+                              "#e8f1ff",
+                            display: "flex",
+                            alignItems:
+                              "center",
+                            justifyContent:
+                              "center",
+                          }}
+                        >
+                          {item.icon}
+                        </Box>
 
-                {/* Role */}
+                        <Box
+                          sx={{
+                            minWidth: 0,
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                          >
+                            {item.label}
+                          </Typography>
 
-                <Grid size={{ xs: 12 }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 2,
-                      p: 2.5,
-                      borderRadius: 3,
-                      bgcolor: "#f8fafc",
-                    }}
-                  >
-                    <AdminPanelSettingsRoundedIcon
-                      color="primary"
-                    />
-
-                    <Box>
-                      <Typography
-                        color="text.secondary"
-                        variant="body2"
-                      >
-                        Role
-                      </Typography>
-
-                      <Typography
-                        fontWeight={600}
-                        sx={{ mt: 0.5 }}
-                      >
-                        {profile.role}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Grid>
+                          <Typography
+                            fontWeight={600}
+                            sx={{
+                              mt: 0.5,
+                              wordBreak:
+                                "break-word",
+                            }}
+                          >
+                            {item.value}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Grid>
+                  )
+                )}
               </Grid>
             </CardContent>
           </Card>

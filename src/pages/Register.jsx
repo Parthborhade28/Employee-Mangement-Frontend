@@ -39,7 +39,11 @@ function Register() {
 
     setError("");
 
-    if (!form.name || !form.email || !form.password) {
+    if (
+      !form.name ||
+      !form.email ||
+      !form.password
+    ) {
       setError("Please fill all fields.");
       return;
     }
@@ -51,11 +55,14 @@ function Register() {
 
       navigate("/");
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error(
+        "Registration error:",
+        error
+      );
 
       setError(
         error.response?.data?.message ||
-        "Registration failed. Please try again."
+          "Registration failed. Please try again."
       );
     } finally {
       setLoading(false);
@@ -71,6 +78,7 @@ function Register() {
         justifyContent: "center",
         bgcolor: "#f5f7fb",
         px: 2,
+        py: 4,
       }}
     >
       <Card
@@ -78,10 +86,14 @@ function Register() {
           width: "100%",
           maxWidth: 450,
           borderRadius: 4,
-          boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
+          boxShadow:
+            "0 8px 30px rgba(0,0,0,0.08)",
         }}
       >
         <CardContent sx={{ p: 4 }}>
+
+          {/* HEADER */}
+
           <Box
             sx={{
               display: "flex",
@@ -125,6 +137,8 @@ function Register() {
             </Typography>
           </Box>
 
+          {/* ERROR */}
+
           {error && (
             <Alert
               severity="error"
@@ -137,10 +151,15 @@ function Register() {
             </Alert>
           )}
 
+          {/* FORM */}
+
           <Box
             component="form"
             onSubmit={handleRegister}
           >
+
+            {/* NAME */}
+
             <TextField
               fullWidth
               label="Full Name"
@@ -150,6 +169,8 @@ function Register() {
               margin="normal"
               required
             />
+
+            {/* EMAIL */}
 
             <TextField
               fullWidth
@@ -162,6 +183,8 @@ function Register() {
               required
             />
 
+            {/* PASSWORD */}
+
             <TextField
               fullWidth
               label="Password"
@@ -172,6 +195,8 @@ function Register() {
               margin="normal"
               required
             />
+
+            {/* REGISTER */}
 
             <Button
               fullWidth
@@ -187,9 +212,14 @@ function Register() {
                 fontWeight: 600,
               }}
             >
-              {loading ? "Creating Account..." : "Register"}
+              {loading
+                ? "Creating Account..."
+                : "Register"}
             </Button>
+
           </Box>
+
+          {/* LOGIN */}
 
           <Box
             sx={{
@@ -218,6 +248,7 @@ function Register() {
               Login
             </Button>
           </Box>
+
         </CardContent>
       </Card>
     </Box>

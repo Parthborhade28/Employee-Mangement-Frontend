@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -7,6 +7,7 @@ import {
   Typography,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
@@ -15,10 +16,18 @@ import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import EmployeeForm from "../components/EmployeeForm";
 
+import { getProfile } from "../services/authService";
 import { addEmployee } from "../services/employeeService";
 
 function AddEmployee() {
   const navigate = useNavigate();
+
+  // ================= PROFILE =================
+
+  const [profile, setProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  // ================= EMPLOYEE =================
 
   const [image, setImage] = useState(null);
 
@@ -32,33 +41,107 @@ function AddEmployee() {
     joiningDate: "",
   });
 
+  // ================= SNACKBAR =================
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
 
+  // ================= CHECK ROLE =================
+
+  useEffect(() => {
+    checkProfile();
+  }, []);
+
+  const checkProfile = async () => {
+    try {
+      setProfileLoading(true);
+
+      const data = await getProfile();
+
+      setProfile(data);
+
+      // USER cannot add employees
+
+      if (data.role !== "ADMIN") {
+        navigate("/dashboard", {
+          replace: true,
+        });
+
+        return;
+      }
+    } catch (error) {
+      console.error(
+        "Unable to load profile:",
+        error
+      );
+
+      localStorage.removeItem("token");
+
+      navigate("/", {
+        replace: true,
+      });
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
+  // ================= SAVE EMPLOYEE =================
+
   const handleSave = async () => {
     try {
       const formData = new FormData();
 
-      formData.append("firstName", employee.firstName);
-      formData.append("lastName", employee.lastName);
-      formData.append("email", employee.email);
-      formData.append("phone", employee.phone);
-      formData.append("department", employee.department);
-      formData.append("salary", employee.salary);
-      formData.append("joiningDate", employee.joiningDate);
+      formData.append(
+        "firstName",
+        employee.firstName
+      );
+
+      formData.append(
+        "lastName",
+        employee.lastName
+      );
+
+      formData.append(
+        "email",
+        employee.email
+      );
+
+      formData.append(
+        "phone",
+        employee.phone
+      );
+
+      formData.append(
+        "department",
+        employee.department
+      );
+
+      formData.append(
+        "salary",
+        employee.salary
+      );
+
+      formData.append(
+        "joiningDate",
+        employee.joiningDate
+      );
 
       if (image) {
-        formData.append("profileImage", image);
+        formData.append(
+          "profileImage",
+          image
+        );
       }
 
       await addEmployee(formData);
 
       setSnackbar({
         open: true,
-        message: "Employee Added Successfully",
+        message:
+          "Employee Added Successfully",
         severity: "success",
       });
 
@@ -66,7 +149,10 @@ function AddEmployee() {
         navigate("/employees");
       }, 1200);
     } catch (error) {
-      console.error("Add employee error:", error);
+      console.error(
+        "Add employee error:",
+        error
+      );
 
       setSnackbar({
         open: true,
@@ -77,6 +163,43 @@ function AddEmployee() {
       });
     }
   };
+
+  // ================= LOADING =================
+
+  if (profileLoading) {
+    return (
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          gap: 2,
+          bgcolor: "#f5f7fb",
+        }}
+      >
+        <CircularProgress />
+
+        <Typography
+          color="text.secondary"
+        >
+          Checking permissions...
+        </Typography>
+      </Box>
+    );
+  }
+
+  // ================= ACCESS DENIED =================
+
+  if (
+    !profile ||
+    profile.role !== "ADMIN"
+  ) {
+    return null;
+  }
+
+  // ================= ADMIN PAGE =================
 
   return (
     <Box
@@ -101,11 +224,11 @@ function AddEmployee() {
           flexDirection: "column",
         }}
       >
-        {/* Navbar */}
+        {/* ================= NAVBAR ================= */}
 
         <Navbar />
 
-        {/* Page Content */}
+        {/* ================= PAGE CONTENT ================= */}
 
         <Box
           component="main"
@@ -113,23 +236,29 @@ function AddEmployee() {
             flex: 1,
             width: "100%",
             minWidth: 0,
+
             px: {
               xs: 2,
               sm: 3,
               md: 4,
             },
+
             py: {
               xs: 2,
               md: 3,
             },
           }}
         >
-          {/* Back Button */}
+          {/* ================= BACK BUTTON ================= */}
 
           <Button
             variant="outlined"
-            startIcon={<ArrowBackRoundedIcon />}
-            onClick={() => navigate("/employees")}
+            startIcon={
+              <ArrowBackRoundedIcon />
+            }
+            onClick={() =>
+              navigate("/employees")
+            }
             sx={{
               mb: 3,
               borderRadius: 3,
@@ -140,7 +269,7 @@ function AddEmployee() {
             Back to Employees
           </Button>
 
-          {/* Page Heading */}
+          {/* ================= PAGE HEADING ================= */}
 
           <Box sx={{ mb: 3 }}>
             <Typography
@@ -163,14 +292,15 @@ function AddEmployee() {
             </Typography>
           </Box>
 
-          {/* Employee Form */}
+          {/* ================= EMPLOYEE FORM ================= */}
 
           <Box
             sx={{
               width: "100%",
               bgcolor: "#ffffff",
               borderRadius: 4,
-              border: "1px solid #e5e7eb",
+              border:
+                "1px solid #e5e7eb",
               boxShadow:
                 "0 4px 20px rgba(0, 0, 0, 0.04)",
               p: {

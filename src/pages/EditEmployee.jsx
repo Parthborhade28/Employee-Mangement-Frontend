@@ -16,6 +16,8 @@ import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import EmployeeForm from "../components/EmployeeForm";
 
+import { getProfile } from "../services/authService";
+
 import {
   getEmployeeById,
   updateEmployee,
@@ -24,6 +26,14 @@ import {
 function EditEmployee() {
   const navigate = useNavigate();
   const { id } = useParams();
+
+  // ================= PROFILE =================
+
+  const [profile, setProfile] = useState(null);
+  const [profileLoading, setProfileLoading] =
+    useState(true);
+
+  // ================= EMPLOYEE =================
 
   const [loading, setLoading] = useState(true);
 
@@ -40,29 +50,82 @@ function EditEmployee() {
 
   const [image, setImage] = useState(null);
 
+  // ================= SNACKBAR =================
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
 
+  // ================= CHECK PROFILE =================
+
   useEffect(() => {
-    loadEmployee();
-  }, [id]);
+    checkProfile();
+  }, []);
+
+  const checkProfile = async () => {
+    try {
+      setProfileLoading(true);
+
+      const data = await getProfile();
+
+      setProfile(data);
+
+      // USER cannot edit employees
+
+      if (data.role !== "ADMIN") {
+        navigate("/dashboard", {
+          replace: true,
+        });
+
+        return;
+      }
+    } catch (error) {
+      console.error(
+        "Unable to load profile:",
+        error
+      );
+
+      localStorage.removeItem("token");
+
+      navigate("/", {
+        replace: true,
+      });
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
+  // ================= LOAD EMPLOYEE =================
+
+  useEffect(() => {
+    if (
+      profile &&
+      profile.role === "ADMIN"
+    ) {
+      loadEmployee();
+    }
+  }, [profile, id]);
 
   const loadEmployee = async () => {
     try {
       setLoading(true);
 
-      const data = await getEmployeeById(id);
+      const data =
+        await getEmployeeById(id);
 
       setEmployee(data);
     } catch (error) {
-      console.error("Error loading employee:", error);
+      console.error(
+        "Error loading employee:",
+        error
+      );
 
       setSnackbar({
         open: true,
-        message: "Unable to load employee",
+        message:
+          "Unable to load employee",
         severity: "error",
       });
     } finally {
@@ -70,27 +133,63 @@ function EditEmployee() {
     }
   };
 
+  // ================= UPDATE EMPLOYEE =================
+
   const handleUpdate = async () => {
     try {
       const formData = new FormData();
 
-      formData.append("firstName", employee.firstName);
-      formData.append("lastName", employee.lastName);
-      formData.append("email", employee.email);
-      formData.append("phone", employee.phone);
-      formData.append("department", employee.department);
-      formData.append("salary", employee.salary);
-      formData.append("joiningDate", employee.joiningDate);
+      formData.append(
+        "firstName",
+        employee.firstName
+      );
+
+      formData.append(
+        "lastName",
+        employee.lastName
+      );
+
+      formData.append(
+        "email",
+        employee.email
+      );
+
+      formData.append(
+        "phone",
+        employee.phone
+      );
+
+      formData.append(
+        "department",
+        employee.department
+      );
+
+      formData.append(
+        "salary",
+        employee.salary
+      );
+
+      formData.append(
+        "joiningDate",
+        employee.joiningDate
+      );
 
       if (image) {
-        formData.append("profileImage", image);
+        formData.append(
+          "profileImage",
+          image
+        );
       }
 
-      await updateEmployee(id, formData);
+      await updateEmployee(
+        id,
+        formData
+      );
 
       setSnackbar({
         open: true,
-        message: "Employee Updated Successfully",
+        message:
+          "Employee Updated Successfully",
         severity: "success",
       });
 
@@ -98,7 +197,10 @@ function EditEmployee() {
         navigate("/employees");
       }, 1200);
     } catch (error) {
-      console.error("Update employee error:", error);
+      console.error(
+        "Update employee error:",
+        error
+      );
 
       setSnackbar({
         open: true,
@@ -109,6 +211,43 @@ function EditEmployee() {
       });
     }
   };
+
+  // ================= PROFILE LOADING =================
+
+  if (profileLoading) {
+    return (
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          gap: 2,
+          bgcolor: "#f5f7fb",
+        }}
+      >
+        <CircularProgress />
+
+        <Typography
+          color="text.secondary"
+        >
+          Checking permissions...
+        </Typography>
+      </Box>
+    );
+  }
+
+  // ================= ACCESS DENIED =================
+
+  if (
+    !profile ||
+    profile.role !== "ADMIN"
+  ) {
+    return null;
+  }
+
+  // ================= ADMIN PAGE =================
 
   return (
     <Box
@@ -133,11 +272,11 @@ function EditEmployee() {
           flexDirection: "column",
         }}
       >
-        {/* Navbar */}
+        {/* ================= NAVBAR ================= */}
 
         <Navbar />
 
-        {/* Page Content */}
+        {/* ================= PAGE CONTENT ================= */}
 
         <Box
           component="main"
@@ -145,20 +284,26 @@ function EditEmployee() {
             flex: 1,
             width: "100%",
             minWidth: 0,
+
             px: {
               xs: 2,
               sm: 3,
               md: 4,
             },
+
             py: 3,
           }}
         >
-          {/* Back Button */}
+          {/* ================= BACK BUTTON ================= */}
 
           <Button
             variant="outlined"
-            startIcon={<ArrowBackRoundedIcon />}
-            onClick={() => navigate("/employees")}
+            startIcon={
+              <ArrowBackRoundedIcon />
+            }
+            onClick={() =>
+              navigate("/employees")
+            }
             sx={{
               mb: 3,
               borderRadius: 3,
@@ -169,7 +314,7 @@ function EditEmployee() {
             Back to Employees
           </Button>
 
-          {/* Heading */}
+          {/* ================= HEADING ================= */}
 
           <Box sx={{ mb: 3 }}>
             <Typography
@@ -184,13 +329,15 @@ function EditEmployee() {
 
             <Typography
               color="text.secondary"
-              sx={{ mt: 0.5 }}
+              sx={{
+                mt: 0.5,
+              }}
             >
               Update employee information.
             </Typography>
           </Box>
 
-          {/* Loading */}
+          {/* ================= EMPLOYEE FORM ================= */}
 
           {loading ? (
             <Box
@@ -209,7 +356,9 @@ function EditEmployee() {
               setEmployee={setEmployee}
               image={image}
               setImage={setImage}
-              existingImage={employee.profileImage}
+              existingImage={
+                employee.profileImage
+              }
               onSubmit={handleUpdate}
               buttonText="Update Employee"
             />
