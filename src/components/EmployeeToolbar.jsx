@@ -32,7 +32,7 @@ function EmployeeToolbar({
   };
 
   return (
-    <Box sx={{ mb: 3 }}>
+    <Box sx={{ width: "100%" }}>
       {/* =====================================================
           HEADER
       ===================================================== */}
@@ -41,20 +41,32 @@ function EmployeeToolbar({
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "flex-start",
-          gap: 3,
+          alignItems: {
+            xs: "flex-start",
+            sm: "center",
+          },
+          gap: 2,
           mb: 3,
+
+          flexDirection: {
+            xs: "column",
+            sm: "row",
+          },
         }}
       >
-        {/* Title */}
+        {/* TITLE */}
 
         <Box>
           <Typography
-            variant="h4"
-            fontWeight={700}
+            variant="h5"
+            fontWeight={800}
+            color="text.primary"
             sx={{
-              color: "#111827",
               lineHeight: 1.2,
+              fontSize: {
+                xs: "1.35rem",
+                sm: "1.5rem",
+              },
             }}
           >
             Employee Directory
@@ -67,23 +79,33 @@ function EmployeeToolbar({
               fontSize: "0.95rem",
             }}
           >
-            Manage employee records and company information.
+            Manage employee records and
+            company information.
           </Typography>
         </Box>
 
         {/* =================================================
-            ADD EMPLOYEE - ADMIN ONLY
+            ADD EMPLOYEE
         ================================================= */}
 
         {isAdmin && (
           <Button
             variant="contained"
-            startIcon={<PersonAddAlt1RoundedIcon />}
+            startIcon={
+              <PersonAddAlt1RoundedIcon />
+            }
             onClick={onAddEmployee}
             sx={{
               ...buttonStyle,
+
               flexShrink: 0,
+
               px: 2.5,
+
+              width: {
+                xs: "100%",
+                sm: "auto",
+              },
             }}
           >
             Add Employee
@@ -98,12 +120,19 @@ function EmployeeToolbar({
       <Box
         sx={{
           display: "flex",
-          alignItems: "center",
+          alignItems: "stretch",
           gap: 2,
           width: "100%",
+
+          flexDirection: {
+            xs: "column",
+            lg: "row",
+          },
         }}
       >
-        {/* Search */}
+        {/* =================================================
+            SEARCH
+        ================================================= */}
 
         <TextField
           fullWidth
@@ -115,11 +144,26 @@ function EmployeeToolbar({
           sx={{
             flex: 1,
 
-            bgcolor: "#ffffff",
-
             "& .MuiOutlinedInput-root": {
-              height: 44,
+              minHeight: 44,
+
               borderRadius: 3,
+
+              bgcolor:
+                "background.paper",
+
+              transition:
+                "0.2s ease",
+
+              "&:hover": {
+                bgcolor:
+                  "background.paper",
+              },
+
+              "&.Mui-focused": {
+                bgcolor:
+                  "background.paper",
+              },
             },
 
             "& .MuiInputBase-input": {
@@ -130,9 +174,7 @@ function EmployeeToolbar({
             startAdornment: (
               <InputAdornment position="start">
                 <SearchRoundedIcon
-                  sx={{
-                    color: "#6b7280",
-                  }}
+                  color="action"
                 />
               </InputAdornment>
             ),
@@ -145,13 +187,23 @@ function EmployeeToolbar({
 
         {isAdmin && (
           <Stack
-            direction="row"
+            direction={{
+              xs: "column",
+              sm: "row",
+            }}
             spacing={1.2}
             sx={{
               flexShrink: 0,
+
+              width: {
+                xs: "100%",
+                lg: "auto",
+              },
             }}
           >
-            {/* Hidden CSV input */}
+            {/* =================================================
+                CSV INPUT
+            ================================================= */}
 
             <input
               type="file"
@@ -162,17 +214,21 @@ function EmployeeToolbar({
               }}
               onChange={(e) => {
                 const file =
-                  e.target.files[0];
+                  e.target.files?.[0];
 
                 if (file) {
-                  onImportEmployees(file);
+                  onImportEmployees(
+                    file
+                  );
                 }
 
                 e.target.value = "";
               }}
             />
 
-            {/* Import CSV */}
+            {/* =================================================
+                IMPORT CSV
+            ================================================= */}
 
             <Button
               variant="contained"
@@ -182,12 +238,21 @@ function EmployeeToolbar({
               }
               component="label"
               htmlFor="employee-csv-upload"
-              sx={buttonStyle}
+              sx={{
+                ...buttonStyle,
+
+                width: {
+                  xs: "100%",
+                  sm: "auto",
+                },
+              }}
             >
               Import CSV
             </Button>
 
-            {/* Excel */}
+            {/* =================================================
+                EXCEL
+            ================================================= */}
 
             <Button
               variant="outlined"
@@ -195,13 +260,24 @@ function EmployeeToolbar({
               startIcon={
                 <TableViewRoundedIcon />
               }
-              onClick={onExportExcel}
-              sx={buttonStyle}
+              onClick={
+                onExportExcel
+              }
+              sx={{
+                ...buttonStyle,
+
+                width: {
+                  xs: "100%",
+                  sm: "auto",
+                },
+              }}
             >
               Excel
             </Button>
 
-            {/* PDF */}
+            {/* =================================================
+                PDF
+            ================================================= */}
 
             <Button
               variant="outlined"
@@ -209,8 +285,17 @@ function EmployeeToolbar({
               startIcon={
                 <PictureAsPdfRoundedIcon />
               }
-              onClick={onExportPdf}
-              sx={buttonStyle}
+              onClick={
+                onExportPdf
+              }
+              sx={{
+                ...buttonStyle,
+
+                width: {
+                  xs: "100%",
+                  sm: "auto",
+                },
+              }}
             >
               PDF
             </Button>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   Box,
@@ -8,11 +9,12 @@ import {
   Alert,
   CircularProgress,
   Typography,
+  Card,
+  CardContent,
 } from "@mui/material";
 
-import { useNavigate } from "react-router-dom";
-
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
 
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -34,28 +36,51 @@ import {
 function Employees() {
   const navigate = useNavigate();
 
-  // ================= PROFILE =================
+  // =====================================================
+  // PROFILE
+  // =====================================================
 
-  const [profile, setProfile] = useState(null);
-  const [profileLoading, setProfileLoading] = useState(true);
+  const [profile, setProfile] =
+    useState(null);
 
-  // ================= EMPLOYEES =================
+  const [profileLoading, setProfileLoading] =
+    useState(true);
 
-  const [employees, setEmployees] = useState([]);
-  const [search, setSearch] = useState("");
+  // =====================================================
+  // EMPLOYEES
+  // =====================================================
 
-  const [page, setPage] = useState(0);
-  const [size] = useState(5);
-  const [totalPages, setTotalPages] = useState(1);
+  const [employees, setEmployees] =
+    useState([]);
 
-  // ================= SNACKBAR =================
+  const [search, setSearch] =
+    useState("");
 
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [page, setPage] =
+    useState(0);
+
+  const [size] =
+    useState(5);
+
+  const [totalPages, setTotalPages] =
+    useState(1);
+
+  // =====================================================
+  // SNACKBAR
+  // =====================================================
+
+  const [openSnackbar, setOpenSnackbar] =
+    useState(false);
+
+  const [snackbarMessage, setSnackbarMessage] =
+    useState("");
+
   const [snackbarSeverity, setSnackbarSeverity] =
     useState("success");
 
-  // ================= DELETE =================
+  // =====================================================
+  // DELETE
+  // =====================================================
 
   const [openDeleteDialog, setOpenDeleteDialog] =
     useState(false);
@@ -63,7 +88,9 @@ function Employees() {
   const [selectedEmployee, setSelectedEmployee] =
     useState(null);
 
-  // ================= LOAD PROFILE =================
+  // =====================================================
+  // LOAD PROFILE
+  // =====================================================
 
   useEffect(() => {
     loadProfile();
@@ -73,14 +100,14 @@ function Employees() {
     try {
       setProfileLoading(true);
 
-      const data = await getProfile();
+      const data =
+        await getProfile();
 
       setProfile(data);
 
-      // USER is not allowed to access
-      // the Employees management page.
-
-      if (data.role !== "ADMIN") {
+      if (
+        data.role !== "ADMIN"
+      ) {
         navigate("/dashboard", {
           replace: true,
         });
@@ -93,7 +120,9 @@ function Employees() {
         error
       );
 
-      localStorage.removeItem("token");
+      localStorage.removeItem(
+        "token"
+      );
 
       navigate("/", {
         replace: true,
@@ -103,7 +132,9 @@ function Employees() {
     }
   };
 
-  // ================= LOAD EMPLOYEES =================
+  // =====================================================
+  // LOAD EMPLOYEES
+  // =====================================================
 
   useEffect(() => {
     if (
@@ -116,32 +147,60 @@ function Employees() {
 
   const loadEmployees = async () => {
     try {
-      const data = await getEmployeesByPage(
-        page,
-        size
+      const data =
+        await getEmployeesByPage(
+          page,
+          size
+        );
+
+      setEmployees(
+        data.content
       );
 
-      setEmployees(data.content);
-      setTotalPages(data.totalPages);
+      setTotalPages(
+        data.totalPages
+      );
     } catch (error) {
       console.error(error);
 
-      setSnackbarMessage(
-        "Failed to load employees"
+      showSnackbar(
+        "Failed to load employees",
+        "error"
       );
-
-      setSnackbarSeverity("error");
-
-      setOpenSnackbar(true);
     }
   };
 
-  // ================= SEARCH =================
+  // =====================================================
+  // SNACKBAR HELPER
+  // =====================================================
 
-  const handleSearch = async (value) => {
+  const showSnackbar = (
+    message,
+    severity = "success"
+  ) => {
+    setSnackbarMessage(
+      message
+    );
+
+    setSnackbarSeverity(
+      severity
+    );
+
+    setOpenSnackbar(true);
+  };
+
+  // =====================================================
+  // SEARCH
+  // =====================================================
+
+  const handleSearch = async (
+    value
+  ) => {
     setSearch(value);
 
-    if (value.trim() === "") {
+    if (
+      value.trim() === ""
+    ) {
       setPage(0);
 
       await loadEmployees();
@@ -150,135 +209,165 @@ function Employees() {
     }
 
     try {
-      const data = await searchEmployee(value);
+      const data =
+        await searchEmployee(
+          value
+        );
 
-      if (Array.isArray(data)) {
+      if (
+        Array.isArray(data)
+      ) {
         setEmployees(data);
 
         setTotalPages(1);
       } else {
-        setEmployees(data.content);
+        setEmployees(
+          data.content
+        );
 
-        setTotalPages(data.totalPages);
+        setTotalPages(
+          data.totalPages
+        );
       }
     } catch (error) {
       console.error(error);
 
-      setSnackbarMessage("Search failed");
-
-      setSnackbarSeverity("error");
-
-      setOpenSnackbar(true);
+      showSnackbar(
+        "Search failed",
+        "error"
+      );
     }
   };
 
-  // ================= IMPORT =================
+  // =====================================================
+  // IMPORT
+  // =====================================================
 
-  const handleImportEmployees = async (file) => {
-    try {
-      const message =
-        await importEmployees(file);
+  const handleImportEmployees =
+    async (file) => {
+      try {
+        const message =
+          await importEmployees(
+            file
+          );
 
-      setSnackbarMessage(
-        typeof message === "string"
-          ? message
-          : message?.message ||
-              "Employees imported successfully"
-      );
+        showSnackbar(
+          typeof message ===
+            "string"
+            ? message
+            : message?.message ||
+                "Employees imported successfully",
+          "success"
+        );
 
-      setSnackbarSeverity("success");
+        setPage(0);
 
-      setOpenSnackbar(true);
+        await loadEmployees();
+      } catch (error) {
+        console.error(
+          "Import error:",
+          error
+        );
 
-      setPage(0);
+        let errorMessage =
+          "Failed to import employees";
 
-      await loadEmployees();
-    } catch (error) {
-      console.error(
-        "Import error:",
-        error
-      );
+        if (
+          typeof error.response
+            ?.data === "string"
+        ) {
+          errorMessage =
+            error.response.data;
+        } else if (
+          error.response
+            ?.data?.message
+        ) {
+          errorMessage =
+            error.response.data.message;
+        }
 
-      let errorMessage =
-        "Failed to import employees";
+        showSnackbar(
+          errorMessage,
+          "error"
+        );
+      }
+    };
 
-      if (
-        typeof error.response?.data ===
-        "string"
-      ) {
-        errorMessage =
-          error.response.data;
-      } else if (
-        error.response?.data?.message
-      ) {
-        errorMessage =
-          error.response.data.message;
+  // =====================================================
+  // DELETE
+  // =====================================================
+
+  const handleDeleteClick = (
+    employee
+  ) => {
+    setSelectedEmployee(
+      employee
+    );
+
+    setOpenDeleteDialog(
+      true
+    );
+  };
+
+  const handleConfirmDelete =
+    async () => {
+      if (!selectedEmployee) {
+        return;
       }
 
-      setSnackbarMessage(errorMessage);
+      try {
+        await deleteEmployee(
+          selectedEmployee.id
+        );
 
-      setSnackbarSeverity("error");
+        await loadEmployees();
 
-      setOpenSnackbar(true);
-    }
-  };
+        showSnackbar(
+          "Employee deleted successfully.",
+          "success"
+        );
+      } catch (error) {
+        console.error(error);
 
-  // ================= DELETE =================
+        showSnackbar(
+          "Unable to delete employee.",
+          "error"
+        );
+      } finally {
+        setOpenDeleteDialog(
+          false
+        );
 
-  const handleDeleteClick = (employee) => {
-    setSelectedEmployee(employee);
+        setSelectedEmployee(
+          null
+        );
+      }
+    };
 
-    setOpenDeleteDialog(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!selectedEmployee) {
-      return;
-    }
-
-    try {
-      await deleteEmployee(
-        selectedEmployee.id
-      );
-
-      await loadEmployees();
-
-      setSnackbarMessage(
-        "Employee deleted successfully."
-      );
-
-      setSnackbarSeverity("success");
-
-      setOpenSnackbar(true);
-    } catch (error) {
-      console.error(error);
-
-      setSnackbarMessage(
-        "Unable to delete employee."
-      );
-
-      setSnackbarSeverity("error");
-
-      setOpenSnackbar(true);
-    } finally {
-      setOpenDeleteDialog(false);
-
-      setSelectedEmployee(null);
-    }
-  };
-
-  // ================= LOADING =================
+  // =====================================================
+  // LOADING
+  // =====================================================
 
   if (profileLoading) {
     return (
       <Box
         sx={{
           minHeight: "100vh",
+
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          bgcolor: "#f5f7fb",
-          flexDirection: "column",
+
+          alignItems:
+            "center",
+
+          justifyContent:
+            "center",
+
+          bgcolor:
+            "background.default",
+
+          flexDirection:
+            "column",
+
           gap: 2,
         }}
       >
@@ -293,7 +382,9 @@ function Employees() {
     );
   }
 
-  // ================= USER BLOCK =================
+  // =====================================================
+  // ACCESS DENIED
+  // =====================================================
 
   if (
     !profile ||
@@ -302,44 +393,54 @@ function Employees() {
     return null;
   }
 
-  // ================= ADMIN PAGE =================
-
-  const isAdmin = profile.role === "ADMIN";
+  // =====================================================
+  // PAGE
+  // =====================================================
 
   return (
     <Box
       sx={{
         display: "flex",
+
         minHeight: "100vh",
+
         width: "100%",
-        bgcolor: "#f5f7fb",
+
+        bgcolor:
+          "background.default",
       }}
     >
-      {/* ================= SIDEBAR ================= */}
+      {/* =================================================
+          SIDEBAR
+      ================================================= */}
 
       <Sidebar />
 
-      {/* ================= MAIN CONTENT ================= */}
+      {/* =================================================
+          MAIN CONTENT
+      ================================================= */}
 
       <Box
         sx={{
           flex: 1,
+
           minWidth: 0,
+
           display: "flex",
-          flexDirection: "column",
+
+          flexDirection:
+            "column",
         }}
       >
-        {/* ================= NAVBAR ================= */}
-
         <Navbar />
-
-        {/* ================= PAGE CONTENT ================= */}
 
         <Box
           component="main"
           sx={{
             flex: 1,
+
             width: "100%",
+
             minWidth: 0,
 
             px: {
@@ -354,125 +455,274 @@ function Employees() {
             },
           }}
         >
-          {/* ================= BACK BUTTON ================= */}
+          {/* =================================================
+              BACK BUTTON
+          ================================================= */}
 
-          <Box sx={{ mb: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={
-                <ArrowBackRoundedIcon />
-              }
-              onClick={() =>
-                navigate("/dashboard")
-              }
+          <Button
+            variant="outlined"
+            startIcon={
+              <ArrowBackRoundedIcon />
+            }
+            onClick={() =>
+              navigate(
+                "/dashboard"
+              )
+            }
+            sx={{
+              mb: 3,
+
+              borderRadius: 3,
+
+              textTransform:
+                "none",
+
+              fontWeight: 600,
+            }}
+          >
+            Back to Dashboard
+          </Button>
+
+          {/* =================================================
+              PAGE HEADER
+          ================================================= */}
+
+          <Box sx={{ mb: 3 }}>
+            <Box
               sx={{
-                borderRadius: 3,
-                textTransform: "none",
-                fontWeight: 600,
+                display: "flex",
+
+                alignItems:
+                  "center",
+
+                gap: 1.5,
+
+                mb: 0.7,
               }}
             >
-              Back to Dashboard
-            </Button>
+              <Box
+                sx={{
+                  width: 44,
+
+                  height: 44,
+
+                  borderRadius: 2.5,
+
+                  display: "flex",
+
+                  alignItems:
+                    "center",
+
+                  justifyContent:
+                    "center",
+
+                  bgcolor:
+                    "primary.main",
+
+                  color: "#fff",
+
+                  flexShrink: 0,
+                }}
+              >
+                <GroupsRoundedIcon />
+              </Box>
+
+              <Typography
+                variant="h4"
+                fontWeight={800}
+                color="text.primary"
+                sx={{
+                  fontSize: {
+                    xs: "1.7rem",
+                    sm: "2rem",
+                    md: "2.25rem",
+                  },
+                }}
+              >
+                Employees
+              </Typography>
+            </Box>
+
+            <Typography
+              color="text.secondary"
+              sx={{
+                ml: {
+                  xs: 0,
+                  sm: 6.5,
+                },
+              }}
+            >
+              Manage your organization's
+              employees.
+            </Typography>
           </Box>
 
-          {/* ================= EMPLOYEE TOOLBAR ================= */}
+          {/* =================================================
+              TOOLBAR
+          ================================================= */}
 
           <EmployeeToolbar
             search={search}
-            onSearch={handleSearch}
+            onSearch={
+              handleSearch
+            }
             onAddEmployee={() =>
-              navigate("/add-employee")
+              navigate(
+                "/add-employee"
+              )
             }
             onExportExcel={
               exportEmployees
             }
-            onExportPdf={exportPdf}
+            onExportPdf={
+              exportPdf
+            }
             onImportEmployees={
               handleImportEmployees
             }
-            isAdmin={isAdmin}
+            isAdmin={true}
           />
 
-          {/* ================= EMPLOYEE TABLE ================= */}
+          {/* =================================================
+              TABLE CARD
+          ================================================= */}
 
-          <Box
-            sx={{
-              width: "100%",
-              bgcolor: "#ffffff",
-              borderRadius: 4,
-              overflow: "hidden",
-              border:
-                "1px solid #e5e7eb",
-              boxShadow:
-                "0 4px 20px rgba(0,0,0,0.04)",
-            }}
-          >
-            <EmployeeTable
-              employees={employees}
-              onEdit={(id) =>
-                navigate(
-                  `/edit-employee/${id}`
-                )
-              }
-              onDelete={(id) => {
-                const employee =
-                  employees.find(
-                    (e) => e.id === id
-                  );
-
-                handleDeleteClick(
-                  employee
-                );
-              }}
-              isAdmin={isAdmin}
-            />
-          </Box>
-
-          {/* ================= PAGINATION ================= */}
-
-          <Box
-            display="flex"
-            justifyContent="center"
+          <Card
             sx={{
               mt: 3,
+
+              width: "100%",
+
+              borderRadius: 4,
+
+              border:
+                "1px solid",
+
+              borderColor:
+                "divider",
+
+              bgcolor:
+                "background.paper",
+
+              boxShadow:
+                "0 8px 30px rgba(0,0,0,0.07)",
+
+              overflow:
+                "hidden",
+            }}
+          >
+            <CardContent
+              sx={{
+                p: 0,
+
+                "&:last-child": {
+                  pb: 0,
+                },
+              }}
+            >
+              <EmployeeTable
+                employees={
+                  employees
+                }
+
+                onEdit={(id) =>
+                  navigate(
+                    `/edit-employee/${id}`
+                  )
+                }
+
+                onDelete={(id) => {
+                  const employee =
+                    employees.find(
+                      (e) =>
+                        e.id === id
+                    );
+
+                  handleDeleteClick(
+                    employee
+                  );
+                }}
+
+                isAdmin={true}
+              />
+            </CardContent>
+          </Card>
+
+          {/* =================================================
+              PAGINATION
+          ================================================= */}
+
+          <Box
+            sx={{
+              display: "flex",
+
+              justifyContent:
+                "center",
+
+              mt: 3,
+
               mb: 2,
             }}
           >
             <Pagination
-              page={page + 1}
-              count={totalPages}
+              page={
+                page + 1
+              }
+              count={
+                totalPages
+              }
               color="primary"
               onChange={(
                 event,
                 value
               ) =>
-                setPage(value - 1)
+                setPage(
+                  value - 1
+                )
               }
+              sx={{
+                "& .MuiPaginationItem-root":
+                  {
+                    borderRadius: 2,
+                  },
+              }}
             />
           </Box>
         </Box>
       </Box>
 
-      {/* ================= DELETE DIALOG ================= */}
+      {/* =================================================
+          DELETE DIALOG
+      ================================================= */}
 
       <DeleteEmployeeDialog
-        open={openDeleteDialog}
-        employee={selectedEmployee}
+        open={
+          openDeleteDialog
+        }
+        employee={
+          selectedEmployee
+        }
         onClose={() =>
-          setOpenDeleteDialog(false)
+          setOpenDeleteDialog(
+            false
+          )
         }
         onConfirm={
           handleConfirmDelete
         }
       />
 
-      {/* ================= SNACKBAR ================= */}
+      {/* =================================================
+          SNACKBAR
+      ================================================= */}
 
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
         onClose={() =>
-          setOpenSnackbar(false)
+          setOpenSnackbar(
+            false
+          )
         }
         anchorOrigin={{
           vertical: "bottom",
@@ -480,10 +730,14 @@ function Employees() {
         }}
       >
         <Alert
-          severity={snackbarSeverity}
+          severity={
+            snackbarSeverity
+          }
           variant="filled"
           onClose={() =>
-            setOpenSnackbar(false)
+            setOpenSnackbar(
+              false
+            )
           }
           sx={{
             width: "100%",

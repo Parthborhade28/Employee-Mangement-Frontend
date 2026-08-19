@@ -24,32 +24,75 @@ function EmployeeTable({
   isAdmin = false,
 }) {
   const formatSalary = (salary) => {
-    return `₹${Number(salary).toLocaleString("en-IN")}`;
+    if (
+      salary === null ||
+      salary === undefined ||
+      salary === ""
+    ) {
+      return "Not available";
+    }
+
+    return `₹${Number(
+      salary
+    ).toLocaleString("en-IN")}`;
   };
 
   return (
     <TableContainer
       component={Paper}
       sx={{
-        borderRadius: 4,
-        border: "1px solid #e5e7eb",
-        boxShadow:
-          "0 4px 20px rgba(0,0,0,.05)",
-        overflow: "hidden",
+        width: "100%",
+
+        borderRadius: 0,
+
+        bgcolor:
+          "background.paper",
+
+        boxShadow: "none",
+
+        overflowX: "auto",
+
+        "&::-webkit-scrollbar": {
+          height: 8,
+        },
+
+        "&::-webkit-scrollbar-thumb": {
+          borderRadius: 10,
+          bgcolor: "action.disabled",
+        },
       }}
     >
-      <Table>
-        {/* ================= TABLE HEADER ================= */}
+      <Table
+        sx={{
+          minWidth: 750,
+        }}
+      >
+        {/* =================================================
+            TABLE HEADER
+        ================================================= */}
 
         <TableHead>
           <TableRow
             sx={{
-              bgcolor: "#f8fafc",
+              bgcolor:
+                "action.hover",
+
+              "& .MuiTableCell-root": {
+                borderBottom:
+                  "1px solid",
+                borderColor:
+                  "divider",
+
+                color:
+                  "text.primary",
+              },
             }}
           >
             <TableCell
               sx={{
-                fontWeight: 700,
+                fontWeight: 800,
+                whiteSpace:
+                  "nowrap",
               }}
             >
               Employee
@@ -57,7 +100,9 @@ function EmployeeTable({
 
             <TableCell
               sx={{
-                fontWeight: 700,
+                fontWeight: 800,
+                whiteSpace:
+                  "nowrap",
               }}
             >
               Department
@@ -65,7 +110,9 @@ function EmployeeTable({
 
             <TableCell
               sx={{
-                fontWeight: 700,
+                fontWeight: 800,
+                whiteSpace:
+                  "nowrap",
               }}
             >
               Salary
@@ -73,7 +120,9 @@ function EmployeeTable({
 
             <TableCell
               sx={{
-                fontWeight: 700,
+                fontWeight: 800,
+                whiteSpace:
+                  "nowrap",
               }}
             >
               Joining Date
@@ -85,7 +134,9 @@ function EmployeeTable({
               <TableCell
                 align="center"
                 sx={{
-                  fontWeight: 700,
+                  fontWeight: 800,
+                  whiteSpace:
+                    "nowrap",
                 }}
               >
                 Actions
@@ -94,16 +145,23 @@ function EmployeeTable({
           </TableRow>
         </TableHead>
 
-        {/* ================= TABLE BODY ================= */}
+        {/* =================================================
+            TABLE BODY
+        ================================================= */}
 
         <TableBody>
           {employees.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={isAdmin ? 5 : 4}
+                colSpan={
+                  isAdmin ? 5 : 4
+                }
                 align="center"
                 sx={{
-                  py: 6,
+                  py: 8,
+
+                  borderBottom:
+                    "none",
                 }}
               >
                 <Typography
@@ -119,27 +177,52 @@ function EmployeeTable({
                 key={emp.id}
                 hover
                 sx={{
-                  transition: ".2s",
+                  transition:
+                    "background-color 0.2s ease",
+
+                  "& .MuiTableCell-root":
+                    {
+                      borderBottom:
+                        "1px solid",
+                      borderColor:
+                        "divider",
+                    },
 
                   "&:hover": {
-                    bgcolor: "#f9fbfd",
+                    bgcolor:
+                      "action.hover",
                   },
                 }}
               >
-                {/* ================= EMPLOYEE ================= */}
+                {/* =================================================
+                    EMPLOYEE
+                ================================================= */}
 
                 <TableCell>
                   <Box
-                    display="flex"
-                    alignItems="center"
-                    gap={2}
+                    sx={{
+                      display: "flex",
+                      alignItems:
+                        "center",
+                      gap: 2,
+                      minWidth: 240,
+                    }}
                   >
                     <Avatar
-                      src={emp.profileImage}
+                      src={
+                        emp.profileImage ||
+                        undefined
+                      }
                       sx={{
                         width: 50,
                         height: 50,
-                        bgcolor: "#1976d2",
+
+                        bgcolor:
+                          "primary.main",
+
+                        fontWeight: 700,
+
+                        flexShrink: 0,
                       }}
                     >
                       {emp.firstName
@@ -147,9 +230,18 @@ function EmployeeTable({
                         ?.toUpperCase()}
                     </Avatar>
 
-                    <Box>
+                    <Box
+                      sx={{
+                        minWidth: 0,
+                      }}
+                    >
                       <Typography
-                        fontWeight={600}
+                        fontWeight={700}
+                        color="text.primary"
+                        sx={{
+                          wordBreak:
+                            "break-word",
+                        }}
                       >
                         {emp.firstName}{" "}
                         {emp.lastName}
@@ -158,6 +250,10 @@ function EmployeeTable({
                       <Typography
                         variant="body2"
                         color="text.secondary"
+                        sx={{
+                          wordBreak:
+                            "break-word",
+                        }}
                       >
                         {emp.email}
                       </Typography>
@@ -165,21 +261,36 @@ function EmployeeTable({
                   </Box>
                 </TableCell>
 
-                {/* ================= DEPARTMENT ================= */}
+                {/* =================================================
+                    DEPARTMENT
+                ================================================= */}
 
                 <TableCell>
                   <Chip
-                    label={emp.department}
+                    label={
+                      emp.department ||
+                      "Not assigned"
+                    }
                     color="primary"
                     variant="outlined"
+                    sx={{
+                      fontWeight: 600,
+                    }}
                   />
                 </TableCell>
 
-                {/* ================= SALARY ================= */}
+                {/* =================================================
+                    SALARY
+                ================================================= */}
 
                 <TableCell>
                   <Typography
-                    fontWeight={600}
+                    fontWeight={700}
+                    color="text.primary"
+                    sx={{
+                      whiteSpace:
+                        "nowrap",
+                    }}
                   >
                     {formatSalary(
                       emp.salary
@@ -187,37 +298,81 @@ function EmployeeTable({
                   </Typography>
                 </TableCell>
 
-                {/* ================= JOINING DATE ================= */}
+                {/* =================================================
+                    JOINING DATE
+                ================================================= */}
 
                 <TableCell>
-                  {emp.joiningDate}
+                  <Typography
+                    color="text.primary"
+                    sx={{
+                      whiteSpace:
+                        "nowrap",
+                    }}
+                  >
+                    {emp.joiningDate ||
+                      "Not available"}
+                  </Typography>
                 </TableCell>
 
-                {/* ================= ADMIN ACTIONS ================= */}
+                {/* =================================================
+                    ADMIN ACTIONS
+                ================================================= */}
 
                 {isAdmin && (
-                  <TableCell align="center">
-                    <Tooltip title="Edit Employee">
-                      <IconButton
-                        color="primary"
-                        onClick={() =>
-                          onEdit(emp.id)
-                        }
+                  <TableCell
+                    align="center"
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent:
+                          "center",
+                        gap: 0.5,
+                      }}
+                    >
+                      <Tooltip
+                        title="Edit Employee"
                       >
-                        <EditRoundedIcon />
-                      </IconButton>
-                    </Tooltip>
+                        <IconButton
+                          color="primary"
+                          onClick={() =>
+                            onEdit(
+                              emp.id
+                            )
+                          }
+                          sx={{
+                            "&:hover": {
+                              bgcolor:
+                                "action.hover",
+                            },
+                          }}
+                        >
+                          <EditRoundedIcon />
+                        </IconButton>
+                      </Tooltip>
 
-                    <Tooltip title="Delete Employee">
-                      <IconButton
-                        color="error"
-                        onClick={() =>
-                          onDelete(emp.id)
-                        }
+                      <Tooltip
+                        title="Delete Employee"
                       >
-                        <DeleteRoundedIcon />
-                      </IconButton>
-                    </Tooltip>
+                        <IconButton
+                          color="error"
+                          onClick={() =>
+                            onDelete(
+                              emp.id
+                            )
+                          }
+                          sx={{
+                            "&:hover": {
+                              bgcolor:
+                                "action.hover",
+                            },
+                          }}
+                        >
+                          <DeleteRoundedIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
                   </TableCell>
                 )}
               </TableRow>

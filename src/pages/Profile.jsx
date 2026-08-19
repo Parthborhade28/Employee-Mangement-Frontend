@@ -30,7 +30,8 @@ import { getProfile } from "../services/authService";
 function Profile() {
   const navigate = useNavigate();
 
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] =
+    useState(null);
 
   useEffect(() => {
     loadProfile();
@@ -39,9 +40,13 @@ function Profile() {
   const loadProfile = async () => {
     try {
       const data = await getProfile();
+
       setProfile(data);
     } catch (error) {
-      console.error("Profile error:", error);
+      console.error(
+        "Profile error:",
+        error
+      );
     }
   };
 
@@ -58,7 +63,9 @@ function Profile() {
       return "Not available";
     }
 
-    return `₹${Number(salary).toLocaleString("en-IN")}`;
+    return `₹${Number(
+      salary
+    ).toLocaleString("en-IN")}`;
   };
 
   // =====================================================
@@ -70,9 +77,14 @@ function Profile() {
       return "Not available";
     }
 
-    const parsedDate = new Date(date);
+    const parsedDate =
+      new Date(date);
 
-    if (Number.isNaN(parsedDate.getTime())) {
+    if (
+      Number.isNaN(
+        parsedDate.getTime()
+      )
+    ) {
       return date;
     }
 
@@ -97,7 +109,8 @@ function Profile() {
           display: "flex",
           minHeight: "100vh",
           width: "100%",
-          bgcolor: "#f5f7fb",
+          bgcolor:
+            "background.default",
         }}
       >
         <Sidebar />
@@ -128,61 +141,69 @@ function Profile() {
   }
 
   // =====================================================
-  // INFORMATION ITEM
+  // INFORMATION
   // =====================================================
 
   const informationItems = [
     {
       label: "Full Name",
-      value: profile.name || "Not available",
-      icon: <PersonRoundedIcon color="primary" />,
+      value:
+        profile.name ||
+        "Not available",
+      icon: <PersonRoundedIcon />,
     },
+
     {
       label: "Email",
-      value: profile.email || "Not available",
-      icon: <EmailRoundedIcon color="primary" />,
+      value:
+        profile.email ||
+        "Not available",
+      icon: <EmailRoundedIcon />,
     },
+
     {
       label: "Role",
-      value: profile.role || "Not available",
+      value:
+        profile.role ||
+        "Not available",
       icon: (
-        <AdminPanelSettingsRoundedIcon
-          color="primary"
-        />
+        <AdminPanelSettingsRoundedIcon />
       ),
     },
+
     {
       label: "Department",
       value:
-        profile.department || "Not assigned",
+        profile.department ||
+        "Not assigned",
       icon: (
-        <BusinessRoundedIcon color="primary" />
+        <BusinessRoundedIcon />
       ),
     },
+
     {
       label: "Salary",
-      value: formatSalary(profile.salary),
+      value: formatSalary(
+        profile.salary
+      ),
       icon: (
-        <CurrencyRupeeRoundedIcon
-          color="primary"
-        />
+        <CurrencyRupeeRoundedIcon />
       ),
     },
+
     {
       label: "Joining Date",
       value: formatDate(
         profile.joiningDate
       ),
       icon: (
-        <CalendarMonthRoundedIcon
-          color="primary"
-        />
+        <CalendarMonthRoundedIcon />
       ),
     },
   ];
 
   // =====================================================
-  // PROFILE PAGE
+  // PAGE
   // =====================================================
 
   return (
@@ -191,14 +212,19 @@ function Profile() {
         display: "flex",
         minHeight: "100vh",
         width: "100%",
-        bgcolor: "#f5f7fb",
+        bgcolor:
+          "background.default",
       }}
     >
-      {/* ================= SIDEBAR ================= */}
+      {/* =================================================
+          SIDEBAR
+      ================================================= */}
 
       <Sidebar />
 
-      {/* ================= MAIN CONTENT ================= */}
+      {/* =================================================
+          MAIN CONTENT
+      ================================================= */}
 
       <Box
         sx={{
@@ -208,11 +234,7 @@ function Profile() {
           flexDirection: "column",
         }}
       >
-        {/* Navbar */}
-
         <Navbar />
-
-        {/* Page Content */}
 
         <Box
           component="main"
@@ -220,18 +242,22 @@ function Profile() {
             flex: 1,
             width: "100%",
             minWidth: 0,
+
             px: {
               xs: 2,
               sm: 3,
               md: 4,
             },
+
             py: {
               xs: 2,
               md: 3,
             },
           }}
         >
-          {/* ================= BACK BUTTON ================= */}
+          {/* =================================================
+              BACK
+          ================================================= */}
 
           <Button
             variant="outlined"
@@ -251,14 +277,21 @@ function Profile() {
             Back to Dashboard
           </Button>
 
-          {/* ================= HEADING ================= */}
+          {/* =================================================
+              HEADER
+          ================================================= */}
 
           <Box sx={{ mb: 3 }}>
             <Typography
               variant="h4"
-              fontWeight="bold"
+              fontWeight={800}
+              color="text.primary"
               sx={{
-                color: "#111827",
+                fontSize: {
+                  xs: "1.7rem",
+                  sm: "2rem",
+                  md: "2.25rem",
+                },
               }}
             >
               My Profile
@@ -270,51 +303,93 @@ function Profile() {
                 mt: 0.5,
               }}
             >
-              View your account and employee
-              information.
+              View your account and
+              employee information.
             </Typography>
           </Box>
 
-          {/* ================= PROFILE CARD ================= */}
+          {/* =================================================
+              PROFILE CARD
+          ================================================= */}
 
           <Card
             sx={{
               width: "100%",
-              maxWidth: 1000,
+              maxWidth: 1100,
+
               borderRadius: 4,
+
               border:
-                "1px solid #e5e7eb",
+                "1px solid",
+
+              borderColor:
+                "divider",
+
+              bgcolor:
+                "background.paper",
+
               boxShadow:
-                "0 4px 20px rgba(0, 0, 0, 0.04)",
+                "0 8px 30px rgba(0,0,0,0.07)",
             }}
           >
             <CardContent
               sx={{
                 p: {
-                  xs: 3,
+                  xs: 2.5,
                   sm: 4,
                   md: 5,
                 },
               }}
             >
-              {/* ================= PROFILE HEADER ================= */}
+              {/* =================================================
+                  PROFILE HEADER
+              ================================================= */}
 
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   gap: 3,
-                  flexWrap: "wrap",
+
+                  flexDirection: {
+                    xs: "column",
+                    sm: "row",
+                  },
+
+                  textAlign: {
+                    xs: "center",
+                    sm: "left",
+                  },
                 }}
               >
                 <Avatar
-                  src={profile.profileImage || undefined}
+                  src={
+                    profile.profileImage ||
+                    undefined
+                  }
                   sx={{
-                    width: 110,
-                    height: 110,
-                    bgcolor: "primary.main",
-                    fontSize: 48,
-                    fontWeight: 500,
+                    width: {
+                      xs: 90,
+                      sm: 110,
+                    },
+
+                    height: {
+                      xs: 90,
+                      sm: 110,
+                    },
+
+                    bgcolor:
+                      "primary.main",
+
+                    fontSize: {
+                      xs: 40,
+                      sm: 48,
+                    },
+
+                    fontWeight: 700,
+
+                    boxShadow:
+                      "0 6px 20px rgba(25,118,210,0.25)",
                   }}
                 >
                   {!profile.profileImage &&
@@ -323,10 +398,21 @@ function Profile() {
                       .toUpperCase()}
                 </Avatar>
 
-                <Box>
+                <Box
+                  sx={{
+                    minWidth: 0,
+                  }}
+                >
                   <Typography
                     variant="h4"
-                    fontWeight="bold"
+                    fontWeight={800}
+                    color="text.primary"
+                    sx={{
+                      fontSize: {
+                        xs: "1.6rem",
+                        sm: "2rem",
+                      },
+                    }}
                   >
                     {profile.name}
                   </Typography>
@@ -335,6 +421,8 @@ function Profile() {
                     color="text.secondary"
                     sx={{
                       mt: 0.5,
+                      wordBreak:
+                        "break-word",
                     }}
                   >
                     {profile.email}
@@ -342,29 +430,36 @@ function Profile() {
 
                   <Chip
                     label={
-                      profile.role === "ADMIN"
+                      profile.role ===
+                      "ADMIN"
                         ? "Administrator"
                         : "Employee"
                     }
                     color="primary"
                     sx={{
                       mt: 1.5,
-                      fontWeight: 600,
+                      fontWeight: 700,
                     }}
                   />
                 </Box>
               </Box>
 
-              <Divider sx={{ my: 4 }} />
+              <Divider
+                sx={{
+                  my: 4,
+                }}
+              />
 
-              {/* ================= INFORMATION ================= */}
+              {/* =================================================
+                  INFORMATION
+              ================================================= */}
 
               <Typography
                 variant="h6"
-                fontWeight={700}
+                fontWeight={800}
+                color="text.primary"
                 sx={{
                   mb: 2.5,
-                  color: "#111827",
                 }}
               >
                 Account Information
@@ -372,7 +467,7 @@ function Profile() {
 
               <Grid
                 container
-                spacing={2.5}
+                spacing={2}
               >
                 {informationItems.map(
                   (item) => (
@@ -387,30 +482,60 @@ function Profile() {
                         sx={{
                           display: "flex",
                           alignItems:
-                            "flex-start",
+                            "center",
+
                           gap: 2,
-                          p: 2.5,
-                          minHeight: 80,
+
+                          p: {
+                            xs: 2,
+                            sm: 2.5,
+                          },
+
+                          minHeight: 82,
+
                           borderRadius: 3,
+
                           bgcolor:
-                            "#f8fafc",
+                            "action.hover",
+
                           border:
-                            "1px solid #edf0f4",
-                          boxSizing:
-                            "border-box",
+                            "1px solid",
+
+                          borderColor:
+                            "divider",
+
+                          transition:
+                            "0.2s ease",
+
+                          "&:hover": {
+                            borderColor:
+                              "primary.main",
+
+                            transform:
+                              "translateY(-2px)",
+                          },
                         }}
                       >
                         <Box
                           sx={{
-                            width: 42,
-                            height: 42,
-                            minWidth: 42,
+                            width: 44,
+                            height: 44,
+
+                            minWidth: 44,
+
                             borderRadius: 2.5,
+
                             bgcolor:
-                              "#e8f1ff",
-                            display: "flex",
+                              "primary.main",
+
+                            color: "#fff",
+
+                            display:
+                              "flex",
+
                             alignItems:
                               "center",
+
                             justifyContent:
                               "center",
                           }}
@@ -431,7 +556,8 @@ function Profile() {
                           </Typography>
 
                           <Typography
-                            fontWeight={600}
+                            fontWeight={700}
+                            color="text.primary"
                             sx={{
                               mt: 0.5,
                               wordBreak:
