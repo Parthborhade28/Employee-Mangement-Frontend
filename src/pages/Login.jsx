@@ -18,7 +18,7 @@ import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
-
+import { celebrate } from "../components/ConfettiCelebration";
 import { login } from "../services/authService";
 
 function Login() {
@@ -68,12 +68,16 @@ function Login() {
 
       const response = await login(form);
 
-      localStorage.setItem(
-        "token",
-        response.token
-      );
+    localStorage.setItem(
+  "token",
+  response.token
+);
 
-      navigate("/dashboard");
+celebrate();
+
+setTimeout(() => {
+  navigate("/dashboard");
+}, 800);
 
     } catch (error) {
 
