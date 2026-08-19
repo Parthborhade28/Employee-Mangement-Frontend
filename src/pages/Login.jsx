@@ -10,6 +10,7 @@ import {
   InputAdornment,
   IconButton,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 
 import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
@@ -28,6 +29,9 @@ function Login() {
 
   const [loading, setLoading] = useState(false);
 
+  const [slowConnection, setSlowConnection] =
+    useState(false);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -44,9 +48,23 @@ function Login() {
 
   const handleLogin = async () => {
 
-    try {
+    if (!form.email || !form.password) {
+      alert("Please enter email and password");
+      return;
+    }
 
-      setLoading(true);
+    setLoading(true);
+    setSlowConnection(false);
+
+    // Show cold-start message after 5 seconds
+
+    const slowTimer = setTimeout(() => {
+
+      setSlowConnection(true);
+
+    }, 5000);
+
+    try {
 
       const response = await login(form);
 
@@ -59,11 +77,22 @@ function Login() {
 
     } catch (error) {
 
-      alert("Invalid Email or Password");
+      console.error(
+        "Login error:",
+        error
+      );
+
+      alert(
+        error.response?.data?.message ||
+        "Unable to login. Please try again."
+      );
 
     } finally {
 
+      clearTimeout(slowTimer);
+
       setLoading(false);
+      setSlowConnection(false);
 
     }
 
@@ -78,17 +107,24 @@ function Login() {
         justifyContent: "center",
         alignItems: "center",
         bgcolor: "#f5f7fb",
+        px: 2,
       }}
     >
 
       <Paper
         elevation={6}
         sx={{
-          width: 430,
-          p: 5,
+          width: "100%",
+          maxWidth: 430,
+          p: {
+            xs: 3,
+            sm: 5,
+          },
           borderRadius: 5,
         }}
       >
+
+        {/* ================= LOGO ================= */}
 
         <Box
           display="flex"
@@ -104,6 +140,8 @@ function Login() {
           />
 
         </Box>
+
+        {/* ================= TITLE ================= */}
 
         <Typography
           variant="h4"
@@ -121,6 +159,8 @@ function Login() {
           Welcome Back
         </Typography>
 
+        {/* ================= EMAIL ================= */}
+
         <TextField
           fullWidth
           label="Email Address"
@@ -128,6 +168,7 @@ function Login() {
           value={form.email}
           onChange={handleChange}
           margin="normal"
+          disabled={loading}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -136,6 +177,8 @@ function Login() {
             ),
           }}
         />
+
+        {/* ================= PASSWORD ================= */}
 
         <TextField
           fullWidth
@@ -149,29 +192,40 @@ function Login() {
           name="password"
           value={form.password}
           onChange={handleChange}
+          disabled={loading}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <LockRoundedIcon />
               </InputAdornment>
             ),
+
             endAdornment: (
               <InputAdornment position="end">
+
                 <IconButton
                   onClick={() =>
                     setShowPassword(
                       !showPassword
                     )
                   }
+                  disabled={loading}
                 >
-                  {showPassword
-                    ? <VisibilityOffRoundedIcon />
-                    : <VisibilityRoundedIcon />}
+
+                  {showPassword ? (
+                    <VisibilityOffRoundedIcon />
+                  ) : (
+                    <VisibilityRoundedIcon />
+                  )}
+
                 </IconButton>
+
               </InputAdornment>
             ),
           }}
         />
+
+        {/* ================= FORGOT PASSWORD ================= */}
 
         <Box
           textAlign="right"
@@ -189,6 +243,35 @@ function Login() {
 
         </Box>
 
+        {/* ================= SERVER MESSAGE ================= */}
+
+        {slowConnection && (
+          <Alert
+            severity="info"
+            sx={{
+              mt: 2,
+              borderRadius: 2,
+            }}
+          >
+            <Typography
+              variant="body2"
+              fontWeight={600}
+            >
+              Waking up server...
+            </Typography>
+
+            <Typography
+              variant="caption"
+            >
+              The server is starting. This may
+              take a little longer on the first
+              request.
+            </Typography>
+          </Alert>
+        )}
+
+        {/* ================= LOGIN BUTTON ================= */}
+
         <Button
           fullWidth
           size="large"
@@ -197,16 +280,43 @@ function Login() {
             mt: 3,
             borderRadius: 3,
             height: 50,
+            textTransform: "none",
+            fontWeight: 600,
           }}
           onClick={handleLogin}
           disabled={loading}
         >
 
-          {loading
-            ? <CircularProgress size={25} color="inherit" />
-            : "Login"}
+          {loading ? (
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+              }}
+            >
+
+              <CircularProgress
+                size={23}
+                color="inherit"
+              />
+
+              <span>
+                {slowConnection
+                  ? "Starting server..."
+                  : "Logging in..."}
+              </span>
+
+            </Box>
+
+          ) : (
+            "Login"
+          )}
 
         </Button>
+
+        {/* ================= REGISTER ================= */}
 
         <Typography
           textAlign="center"
