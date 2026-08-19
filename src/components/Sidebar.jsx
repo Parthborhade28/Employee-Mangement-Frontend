@@ -12,6 +12,7 @@ import {
   Box,
   Divider,
   CircularProgress,
+  IconButton,
 } from "@mui/material";
 
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
@@ -20,6 +21,8 @@ import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 import { NavLink, useNavigate } from "react-router-dom";
 
@@ -32,6 +35,7 @@ function Sidebar() {
 
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     loadRole();
@@ -47,8 +51,6 @@ function Sidebar() {
     } catch (error) {
       console.error("Unable to load user role:", error);
 
-      // If the token is invalid/expired,
-      // send the user back to login.
       localStorage.removeItem("token");
       navigate("/");
     } finally {
@@ -58,8 +60,11 @@ function Sidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-
     navigate("/");
+  };
+
+  const handleNavigation = () => {
+    setMobileOpen(false);
   };
 
   const adminMenuItems = [
@@ -103,34 +108,30 @@ function Sidebar() {
       ? adminMenuItems
       : userMenuItems;
 
-  return (
-    <Drawer
-      variant="permanent"
+  const drawerContent = (
+    <Box
       sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-
-        "& .MuiDrawer-paper": {
-          width: drawerWidth,
-          boxSizing: "border-box",
-          bgcolor: "#ffffff",
-          borderRight: "1px solid #e5e7eb",
-          display: "flex",
-          justifyContent: "space-between",
-        },
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
       {/* ================= TOP ================= */}
 
       <Box>
-        {/* Logo */}
-
-        <Toolbar>
+        <Toolbar
+          sx={{
+            px: 2,
+            minHeight: 70,
+          }}
+        >
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               gap: 1.5,
+              width: "100%",
             }}
           >
             <BusinessRoundedIcon
@@ -140,7 +141,7 @@ function Sidebar() {
               }}
             />
 
-            <Box>
+            <Box sx={{ flex: 1 }}>
               <Typography
                 variant="h6"
                 fontWeight="bold"
@@ -155,12 +156,26 @@ function Sidebar() {
                 Employee Management
               </Typography>
             </Box>
+
+            {/* Close button only on mobile */}
+
+            <IconButton
+              onClick={() => setMobileOpen(false)}
+              sx={{
+                display: {
+                  xs: "flex",
+                  md: "none",
+                },
+              }}
+            >
+              <CloseRoundedIcon />
+            </IconButton>
           </Box>
         </Toolbar>
 
         <Divider />
 
-        {/* Navigation */}
+        {/* ================= NAVIGATION ================= */}
 
         <List sx={{ p: 2 }}>
           {loading ? (
@@ -185,6 +200,7 @@ function Sidebar() {
                 <ListItemButton
                   component={NavLink}
                   to={item.path}
+                  onClick={handleNavigation}
                   sx={{
                     borderRadius: 3,
 
@@ -250,7 +266,84 @@ function Sidebar() {
           </ListItemButton>
         </ListItem>
       </Box>
-    </Drawer>
+    </Box>
+  );
+
+  return (
+    <>
+      {/* ================= MOBILE MENU BUTTON ================= */}
+
+      <IconButton
+        onClick={() => setMobileOpen(true)}
+        sx={{
+          position: "fixed",
+          top: 12,
+          left: 12,
+          zIndex: 1300,
+          display: {
+            xs: "flex",
+            md: "none",
+          },
+          bgcolor: "#ffffff",
+          boxShadow: 2,
+
+          "&:hover": {
+            bgcolor: "#ffffff",
+          },
+        }}
+      >
+        <MenuRoundedIcon />
+      </IconButton>
+
+      {/* ================= DESKTOP SIDEBAR ================= */}
+
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: {
+            xs: "none",
+            md: "block",
+          },
+
+          width: drawerWidth,
+          flexShrink: 0,
+
+          "& .MuiDrawer-paper": {
+            width: drawerWidth,
+            boxSizing: "border-box",
+            bgcolor: "#ffffff",
+            borderRight: "1px solid #e5e7eb",
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+
+      {/* ================= MOBILE SIDEBAR ================= */}
+
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        ModalProps={{
+          keepMounted: true,
+        }}
+        sx={{
+          display: {
+            xs: "block",
+            md: "none",
+          },
+
+          "& .MuiDrawer-paper": {
+            width: drawerWidth,
+            boxSizing: "border-box",
+            bgcolor: "#ffffff",
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+    </>
   );
 }
 
