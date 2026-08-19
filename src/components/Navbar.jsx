@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   AppBar,
   Toolbar,
@@ -8,16 +9,24 @@ import {
   Chip,
   IconButton,
   CircularProgress,
+  Tooltip,
 } from "@mui/material";
 
 import NotificationsNoneRoundedIcon from "@mui/icons-material/NotificationsNoneRounded";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
+import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
+import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 
 import { getProfile } from "../services/authService";
+import { useThemeMode } from "../theme/ThemeContext";
 
 function Navbar() {
 
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] =
+    useState(null);
+
+  const { mode, toggleTheme } =
+    useThemeMode();
 
   useEffect(() => {
     loadProfile();
@@ -39,39 +48,75 @@ function Navbar() {
 
   };
 
-  const today = new Date().toLocaleDateString(
-    "en-IN",
-    {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }
-  );
+  const today =
+    new Date().toLocaleDateString(
+      "en-IN",
+      {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }
+    );
 
   return (
-   <AppBar
-  position="sticky"
-  sx={{
-    width: "100%",
-    boxSizing: "border-box",
-    bgcolor: "#fff",
-    color: "#111827",
-    borderBottom: "1px solid #e5e7eb",
-  }}
+
+    <AppBar
+      position="sticky"
+      elevation={0}
+      sx={{
+        width: "100%",
+        boxSizing: "border-box",
+
+        bgcolor: "background.paper",
+
+        color: "text.primary",
+
+        borderBottom:
+          "1px solid",
+
+        borderColor: "divider",
+      }}
     >
+
       <Toolbar
         sx={{
-          justifyContent: "space-between",
+          justifyContent:
+            "space-between",
+
           minHeight: 72,
+
+          px: {
+            xs: 2,
+            sm: 3,
+          },
         }}
       >
 
-        <Box>
+        {/* ================= LEFT ================= */}
+
+        <Box
+          sx={{
+            minWidth: 0,
+          }}
+        >
 
           <Typography
             variant="h5"
             fontWeight="bold"
+            sx={{
+              fontSize: {
+                xs: "1.1rem",
+                sm: "1.35rem",
+                md: "1.5rem",
+              },
+
+              whiteSpace: "nowrap",
+
+              overflow: "hidden",
+
+              textOverflow: "ellipsis",
+            }}
           >
             Employee Management System
           </Typography>
@@ -86,13 +131,20 @@ function Navbar() {
             <CalendarMonthRoundedIcon
               sx={{
                 fontSize: 18,
-                color: "#6b7280",
+                color:
+                  "text.secondary",
               }}
             />
 
             <Typography
               variant="body2"
               color="text.secondary"
+              sx={{
+                display: {
+                  xs: "none",
+                  sm: "block",
+                },
+              }}
             >
               {today}
             </Typography>
@@ -101,32 +153,119 @@ function Navbar() {
 
         </Box>
 
+        {/* ================= RIGHT ================= */}
+
         <Box
           display="flex"
           alignItems="center"
-          gap={3}
+          gap={{
+            xs: 0.5,
+            sm: 1.5,
+          }}
         >
 
-          <IconButton>
+          {/* ================= THEME TOGGLE ================= */}
 
-            <NotificationsNoneRoundedIcon />
+          <Tooltip
+            title={
+              mode === "light"
+                ? "Switch to dark mode"
+                : "Switch to light mode"
+            }
+          >
 
-          </IconButton>
+            <IconButton
+              onClick={toggleTheme}
+              sx={{
+                color:
+                  "text.primary",
+
+                "&:hover": {
+                  bgcolor:
+                    "action.hover",
+                },
+              }}
+            >
+
+              {mode === "light" ? (
+                <DarkModeRoundedIcon />
+              ) : (
+                <LightModeRoundedIcon />
+              )}
+
+            </IconButton>
+
+          </Tooltip>
+
+          {/* ================= NOTIFICATIONS ================= */}
+
+          <Tooltip title="Notifications">
+
+            <IconButton
+              sx={{
+                color:
+                  "text.primary",
+
+                "&:hover": {
+                  bgcolor:
+                    "action.hover",
+                },
+              }}
+            >
+
+              <NotificationsNoneRoundedIcon />
+
+            </IconButton>
+
+          </Tooltip>
+
+          {/* ================= PROFILE ================= */}
 
           {profile ? (
 
-            <>
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={{
+                xs: 0.5,
+                sm: 1,
+              }}
+            >
+
               <Avatar
                 sx={{
-                  bgcolor: "#1976d2",
+                  bgcolor:
+                    "primary.main",
+
+                  width: {
+                    xs: 36,
+                    sm: 42,
+                  },
+
+                  height: {
+                    xs: 36,
+                    sm: 42,
+                  },
                 }}
               >
-                {profile.name.charAt(0).toUpperCase()}
+                {profile.name
+                  ?.charAt(0)
+                  .toUpperCase()}
               </Avatar>
 
-              <Box>
+              <Box
+                sx={{
+                  display: {
+                    xs: "none",
+                    sm: "block",
+                  },
+                }}
+              >
 
-                <Typography fontWeight={600}>
+                <Typography
+                  fontWeight={600}
+                  noWrap
+                >
                   {profile.name}
                 </Typography>
 
@@ -137,18 +276,23 @@ function Navbar() {
                 />
 
               </Box>
-            </>
+
+            </Box>
 
           ) : (
 
-            <CircularProgress size={25} />
+            <CircularProgress
+              size={25}
+            />
 
           )}
 
         </Box>
 
       </Toolbar>
+
     </AppBar>
+
   );
 }
 
