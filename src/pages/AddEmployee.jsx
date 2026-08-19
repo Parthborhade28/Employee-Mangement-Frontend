@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -22,12 +23,18 @@ import { addEmployee } from "../services/employeeService";
 function AddEmployee() {
   const navigate = useNavigate();
 
-  // ================= PROFILE =================
+  // =====================================================
+  // PROFILE
+  // =====================================================
 
   const [profile, setProfile] = useState(null);
-  const [profileLoading, setProfileLoading] = useState(true);
 
-  // ================= EMPLOYEE =================
+  const [profileLoading, setProfileLoading] =
+    useState(true);
+
+  // =====================================================
+  // EMPLOYEE
+  // =====================================================
 
   const [image, setImage] = useState(null);
 
@@ -41,7 +48,9 @@ function AddEmployee() {
     joiningDate: "",
   });
 
-  // ================= SNACKBAR =================
+  // =====================================================
+  // SNACKBAR
+  // =====================================================
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -49,7 +58,9 @@ function AddEmployee() {
     severity: "success",
   });
 
-  // ================= CHECK ROLE =================
+  // =====================================================
+  // CHECK ADMIN
+  // =====================================================
 
   useEffect(() => {
     checkProfile();
@@ -62,8 +73,6 @@ function AddEmployee() {
       const data = await getProfile();
 
       setProfile(data);
-
-      // USER cannot add employees
 
       if (data.role !== "ADMIN") {
         navigate("/dashboard", {
@@ -88,7 +97,9 @@ function AddEmployee() {
     }
   };
 
-  // ================= SAVE EMPLOYEE =================
+  // =====================================================
+  // SAVE EMPLOYEE
+  // =====================================================
 
   const handleSave = async () => {
     try {
@@ -141,7 +152,7 @@ function AddEmployee() {
       setSnackbar({
         open: true,
         message:
-          "Employee Added Successfully",
+          "Employee added successfully!",
         severity: "success",
       });
 
@@ -158,13 +169,15 @@ function AddEmployee() {
         open: true,
         message:
           error.response?.data?.message ||
-          "Unable to Add Employee",
+          "Unable to add employee.",
         severity: "error",
       });
     }
   };
 
-  // ================= LOADING =================
+  // =====================================================
+  // LOADING
+  // =====================================================
 
   if (profileLoading) {
     return (
@@ -176,21 +189,21 @@ function AddEmployee() {
           justifyContent: "center",
           flexDirection: "column",
           gap: 2,
-          bgcolor: "#f5f7fb",
+          bgcolor: "background.default",
         }}
       >
         <CircularProgress />
 
-        <Typography
-          color="text.secondary"
-        >
+        <Typography color="text.secondary">
           Checking permissions...
         </Typography>
       </Box>
     );
   }
 
-  // ================= ACCESS DENIED =================
+  // =====================================================
+  // ACCESS DENIED
+  // =====================================================
 
   if (
     !profile ||
@@ -199,7 +212,9 @@ function AddEmployee() {
     return null;
   }
 
-  // ================= ADMIN PAGE =================
+  // =====================================================
+  // PAGE
+  // =====================================================
 
   return (
     <Box
@@ -207,14 +222,18 @@ function AddEmployee() {
         display: "flex",
         minHeight: "100vh",
         width: "100%",
-        bgcolor: "#f5f7fb",
+        bgcolor: "background.default",
       }}
     >
-      {/* ================= SIDEBAR ================= */}
+      {/* =================================================
+          SIDEBAR
+      ================================================= */}
 
       <Sidebar />
 
-      {/* ================= MAIN CONTENT ================= */}
+      {/* =================================================
+          MAIN AREA
+      ================================================= */}
 
       <Box
         sx={{
@@ -224,11 +243,13 @@ function AddEmployee() {
           flexDirection: "column",
         }}
       >
-        {/* ================= NAVBAR ================= */}
+        {/* NAVBAR */}
 
         <Navbar />
 
-        {/* ================= PAGE CONTENT ================= */}
+        {/* =================================================
+            CONTENT
+        ================================================= */}
 
         <Box
           component="main"
@@ -249,7 +270,9 @@ function AddEmployee() {
             },
           }}
         >
-          {/* ================= BACK BUTTON ================= */}
+          {/* =================================================
+              BACK BUTTON
+          ================================================= */}
 
           <Button
             variant="outlined"
@@ -269,71 +292,87 @@ function AddEmployee() {
             Back to Employees
           </Button>
 
-          {/* ================= PAGE HEADING ================= */}
+          {/* =================================================
+              PAGE HEADER
+          ================================================= */}
 
           <Box sx={{ mb: 3 }}>
-            <Typography
-              variant="h4"
-              fontWeight="bold"
+            <Box
               sx={{
-                color: "#111827",
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                mb: 0.7,
               }}
             >
-              Add Employee
-            </Typography>
+              <Box
+                sx={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 2.5,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  bgcolor: "primary.main",
+                  color: "#fff",
+                  flexShrink: 0,
+                }}
+              >
+                <PersonAddAltRoundedIcon />
+              </Box>
+
+              <Typography
+                variant="h4"
+                fontWeight={800}
+                color="text.primary"
+                sx={{
+                  fontSize: {
+                    xs: "1.7rem",
+                    sm: "2rem",
+                    md: "2.25rem",
+                  },
+                }}
+              >
+                Add Employee
+              </Typography>
+            </Box>
 
             <Typography
               color="text.secondary"
               sx={{
-                mt: 0.5,
+                ml: {
+                  xs: 0,
+                  sm: 6.5,
+                },
+                fontSize: {
+                  xs: "0.9rem",
+                  sm: "1rem",
+                },
               }}
             >
-              Fill the employee details below.
+              Add a new employee to your
+              organization.
             </Typography>
           </Box>
 
-          {/* ================= EMPLOYEE FORM ================= */}
+          {/* =================================================
+              EMPLOYEE FORM
+          ================================================= */}
 
-          <Box
-            sx={{
-              width: "100%",
-              bgcolor: "#ffffff",
-              borderRadius: 4,
-              border:
-                "1px solid #e5e7eb",
-              boxShadow:
-                "0 4px 20px rgba(0, 0, 0, 0.04)",
-              p: {
-                xs: 2,
-                sm: 3,
-                md: 4,
-              },
-            }}
-          >
-            <Typography
-              variant="h5"
-              fontWeight="bold"
-              sx={{
-                mb: 3,
-                color: "#111827",
-              }}
-            >
-              Employee Information
-            </Typography>
-
-            <EmployeeForm
-              employee={employee}
-              setEmployee={setEmployee}
-              image={image}
-              setImage={setImage}
-              onSubmit={handleSave}
-              buttonText="Save Employee"
-            />
-          </Box>
+          <EmployeeForm
+            employee={employee}
+            setEmployee={setEmployee}
+            image={image}
+            setImage={setImage}
+            onSubmit={handleSave}
+            buttonText="Save Employee"
+          />
         </Box>
       </Box>
 
-      {/* ================= SNACKBAR ================= */}
+      {/* =================================================
+          SNACKBAR
+      ================================================= */}
 
       <Snackbar
         open={snackbar.open}

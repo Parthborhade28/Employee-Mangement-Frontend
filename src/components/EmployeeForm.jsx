@@ -22,26 +22,44 @@ function EmployeeForm({
   onSubmit,
   buttonText = "Save Employee",
 }) {
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
+
+    const {
+      name,
+      value,
+    } = e.target;
 
     setEmployee((prev) => ({
       ...prev,
       [name]: value,
     }));
+
   };
 
+
   return (
+
     <Card
       sx={{
         width: "100%",
-        maxWidth: 1100,
+
         borderRadius: 4,
-        border: "1px solid #e5e7eb",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
-        bgcolor: "#ffffff",
+
+        border:
+          "1px solid",
+
+        borderColor:
+          "divider",
+
+        boxShadow:
+          "0 6px 24px rgba(0,0,0,0.07)",
+
+        bgcolor:
+          "background.paper",
       }}
     >
+
       <CardContent
         sx={{
           p: {
@@ -51,83 +69,180 @@ function EmployeeForm({
           },
         }}
       >
-        {/* ================= TITLE ================= */}
 
-        <Typography
-          variant="h5"
-          fontWeight={700}
+        {/* =================================================
+            TITLE
+        ================================================= */}
+
+        <Box
           sx={{
-            color: "#111827",
             mb: 3,
+
+            pb: 2.5,
+
+            borderBottom:
+              "1px solid",
+
+            borderColor:
+              "divider",
           }}
         >
-          Employee Information
-        </Typography>
 
-        {/* ================= FORM FIELDS ================= */}
+          <Typography
+            variant="h6"
+            fontWeight={800}
+            color="text.primary"
+          >
+            Employee Information
+          </Typography>
 
-        <Grid container spacing={2.5}>
 
-          {/* First Name */}
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              mt: 0.5,
+            }}
+          >
+            Enter the employee details below.
+          </Typography>
 
-          <Grid size={{ xs: 12, md: 6 }}>
+        </Box>
+
+
+        {/* =================================================
+            FORM FIELDS
+        ================================================= */}
+
+        <Grid
+          container
+          spacing={2.5}
+        >
+
+          {/* =================================================
+              FIRST NAME
+          ================================================= */}
+
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
+
             <TextField
               fullWidth
               label="First Name"
               name="firstName"
-              value={employee.firstName || ""}
+              value={
+                employee.firstName || ""
+              }
               onChange={handleChange}
+              required
             />
+
           </Grid>
 
-          {/* Last Name */}
 
-          <Grid size={{ xs: 12, md: 6 }}>
+          {/* =================================================
+              LAST NAME
+          ================================================= */}
+
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
+
             <TextField
               fullWidth
               label="Last Name"
               name="lastName"
-              value={employee.lastName || ""}
+              value={
+                employee.lastName || ""
+              }
               onChange={handleChange}
+              required
             />
+
           </Grid>
 
-          {/* Email */}
 
-          <Grid size={{ xs: 12, md: 6 }}>
+          {/* =================================================
+              EMAIL
+          ================================================= */}
+
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
+
             <TextField
               fullWidth
-              label="Email"
+              label="Email Address"
               name="email"
               type="email"
-              value={employee.email || ""}
+              value={
+                employee.email || ""
+              }
               onChange={handleChange}
+              required
             />
+
           </Grid>
 
-          {/* Phone */}
 
-          <Grid size={{ xs: 12, md: 6 }}>
+          {/* =================================================
+              PHONE
+          ================================================= */}
+
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
+
             <TextField
               fullWidth
-              label="Phone"
+              label="Phone Number"
               name="phone"
-              value={employee.phone || ""}
+              value={
+                employee.phone || ""
+              }
               onChange={handleChange}
+              required
             />
+
           </Grid>
 
-          {/* Department */}
 
-          <Grid size={{ xs: 12, md: 6 }}>
+          {/* =================================================
+              DEPARTMENT
+          ================================================= */}
+
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
+
             <TextField
               fullWidth
               select
               label="Department"
               name="department"
-              value={employee.department || ""}
+              value={
+                employee.department || ""
+              }
               onChange={handleChange}
+              required
             >
+
               <MenuItem value="IT">
                 IT
               </MenuItem>
@@ -151,101 +266,212 @@ function EmployeeForm({
               <MenuItem value="Security">
                 Security
               </MenuItem>
+
             </TextField>
+
           </Grid>
 
-          {/* Salary */}
 
-          <Grid size={{ xs: 12, md: 6 }}>
+          {/* =================================================
+              SALARY
+          ================================================= */}
+
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
+
             <TextField
               fullWidth
               label="Salary"
               name="salary"
               type="number"
-              value={employee.salary || ""}
+              value={
+                employee.salary || ""
+              }
               onChange={handleChange}
+              required
+              slotProps={{
+                htmlInput: {
+                  min: 1,
+                },
+              }}
             />
+
           </Grid>
 
-          {/* Joining Date */}
 
-          <Grid size={{ xs: 12 }}>
+          {/* =================================================
+              JOINING DATE
+          ================================================= */}
+
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
+
             <TextField
               fullWidth
               type="date"
               name="joiningDate"
               label="Joining Date"
-              value={employee.joiningDate || ""}
+              value={
+                employee.joiningDate || ""
+              }
               onChange={handleChange}
-              InputLabelProps={{
-                shrink: true,
+              required
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
               }}
             />
+
           </Grid>
 
-          {/* ================= PROFILE PHOTO ================= */}
 
-          <Grid size={{ xs: 12 }}>
+          {/* =================================================
+              PROFILE PHOTO
+          ================================================= */}
+
+          <Grid
+            size={{
+              xs: 12,
+            }}
+          >
+
             <Box
               sx={{
-                mt: 1,
-                p: 2.5,
+                mt: 0.5,
+
+                p: {
+                  xs: 2,
+                  sm: 2.5,
+                },
+
                 borderRadius: 3,
-                border: "1px solid #e5e7eb",
-                bgcolor: "#fafbfc",
+
+                border:
+                  "1px solid",
+
+                borderColor:
+                  "divider",
+
+                bgcolor:
+                  "action.hover",
               }}
             >
+
               <Typography
                 variant="subtitle1"
-                fontWeight={600}
+                fontWeight={700}
+                color="text.primary"
                 sx={{
-                  mb: 2,
+                  mb: 0.5,
                 }}
               >
                 Profile Photo
               </Typography>
 
+
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  mb: 2,
+                }}
+              >
+                Upload an employee profile
+                photo.
+              </Typography>
+
+
               <ImageUploader
                 image={image}
                 setImage={setImage}
-                existingImage={existingImage}
+                existingImage={
+                  existingImage
+                }
               />
+
             </Box>
+
           </Grid>
 
-          {/* ================= BUTTON ================= */}
 
-          <Grid size={{ xs: 12 }}>
+          {/* =================================================
+              BUTTON
+          ================================================= */}
+
+          <Grid
+            size={{
+              xs: 12,
+            }}
+          >
+
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "flex-end",
+
+                justifyContent: {
+                  xs: "stretch",
+                  sm: "flex-end",
+                },
+
                 mt: 1,
               }}
             >
+
               <Button
+                fullWidth
                 variant="contained"
                 size="large"
-                startIcon={<SaveRoundedIcon />}
+                startIcon={
+                  <SaveRoundedIcon />
+                }
                 onClick={onSubmit}
                 sx={{
-                  minWidth: 180,
-                  height: 46,
+                  minWidth: {
+                    xs: "100%",
+                    sm: 190,
+                  },
+
+                  width: {
+                    xs: "100%",
+                    sm: "auto",
+                  },
+
+                  height: 48,
+
                   borderRadius: 3,
-                  textTransform: "none",
-                  fontWeight: 600,
+
+                  textTransform:
+                    "none",
+
+                  fontWeight: 700,
+
                   px: 3,
                 }}
               >
                 {buttonText}
               </Button>
+
             </Box>
+
           </Grid>
 
         </Grid>
+
       </CardContent>
+
     </Card>
+
   );
+
 }
 
 export default EmployeeForm;
