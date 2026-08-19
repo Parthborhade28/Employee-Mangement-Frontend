@@ -13,6 +13,8 @@ import {
   Divider,
   CircularProgress,
   IconButton,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
@@ -33,6 +35,12 @@ const drawerWidth = 250;
 function Sidebar() {
   const navigate = useNavigate();
 
+  const theme = useTheme();
+
+  const isMobile = useMediaQuery(
+    theme.breakpoints.down("md")
+  );
+
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -49,9 +57,13 @@ function Sidebar() {
 
       setRole(profile.role);
     } catch (error) {
-      console.error("Unable to load user role:", error);
+      console.error(
+        "Unable to load user role:",
+        error
+      );
 
       localStorage.removeItem("token");
+
       navigate("/");
     } finally {
       setLoading(false);
@@ -60,12 +72,17 @@ function Sidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+
     navigate("/");
   };
 
   const handleNavigation = () => {
-    setMobileOpen(false);
+    if (isMobile) {
+      setMobileOpen(false);
+    }
   };
+
+  // ================= ADMIN MENU =================
 
   const adminMenuItems = [
     {
@@ -90,6 +107,8 @@ function Sidebar() {
     },
   ];
 
+  // ================= USER MENU =================
+
   const userMenuItems = [
     {
       text: "My Dashboard",
@@ -108,6 +127,8 @@ function Sidebar() {
       ? adminMenuItems
       : userMenuItems;
 
+  // ================= DRAWER CONTENT =================
+
   const drawerContent = (
     <Box
       sx={{
@@ -115,15 +136,20 @@ function Sidebar() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        bgcolor: "background.paper",
+        color: "text.primary",
       }}
     >
       {/* ================= TOP ================= */}
 
       <Box>
+
+        {/* LOGO */}
+
         <Toolbar
           sx={{
-            px: 2,
-            minHeight: 70,
+            px: 2.5,
+            minHeight: 76,
           }}
         >
           <Box
@@ -134,17 +160,34 @@ function Sidebar() {
               width: "100%",
             }}
           >
-            <BusinessRoundedIcon
+            {/* LOGO ICON */}
+
+            <Box
               sx={{
-                fontSize: 35,
-                color: "#1976d2",
+                width: 42,
+                height: 42,
+                borderRadius: 2.5,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: "primary.main",
+                color: "#fff",
               }}
-            />
+            >
+              <BusinessRoundedIcon />
+            </Box>
+
+            {/* LOGO TEXT */}
 
             <Box sx={{ flex: 1 }}>
+
               <Typography
                 variant="h6"
-                fontWeight="bold"
+                fontWeight={800}
+                sx={{
+                  lineHeight: 1.1,
+                  letterSpacing: 0.3,
+                }}
               >
                 EMS PRO
               </Typography>
@@ -155,30 +198,42 @@ function Sidebar() {
               >
                 Employee Management
               </Typography>
+
             </Box>
 
-            {/* Close button only on mobile */}
+            {/* MOBILE CLOSE */}
 
             <IconButton
-              onClick={() => setMobileOpen(false)}
+              onClick={() =>
+                setMobileOpen(false)
+              }
               sx={{
                 display: {
                   xs: "flex",
                   md: "none",
                 },
+                color: "text.primary",
               }}
             >
               <CloseRoundedIcon />
             </IconButton>
+
           </Box>
         </Toolbar>
 
         <Divider />
 
-        {/* ================= NAVIGATION ================= */}
+        {/* ================= MENU ================= */}
 
-        <List sx={{ p: 2 }}>
+        <List
+          sx={{
+            px: 1.5,
+            py: 2,
+          }}
+        >
+
           {loading ? (
+
             <Box
               sx={{
                 display: "flex",
@@ -188,84 +243,141 @@ function Sidebar() {
             >
               <CircularProgress size={24} />
             </Box>
+
           ) : (
+
             menuItems.map((item) => (
+
               <ListItem
                 key={item.text}
                 disablePadding
                 sx={{
-                  mb: 1,
+                  mb: 0.7,
                 }}
               >
+
                 <ListItemButton
                   component={NavLink}
                   to={item.path}
                   onClick={handleNavigation}
                   sx={{
-                    borderRadius: 3,
+                    minHeight: 48,
+                    px: 1.8,
+                    borderRadius: 2.5,
+
+                    color: "text.secondary",
+
+                    transition:
+                      "all 0.2s ease",
+
+                    "& .MuiListItemIcon-root": {
+                      minWidth: 42,
+                      color: "text.secondary",
+                    },
+
+                    "&:hover": {
+                      bgcolor:
+                        theme.palette.action.hover,
+                      color: "text.primary",
+
+                      "& .MuiListItemIcon-root": {
+                        color: "primary.main",
+                      },
+                    },
 
                     "&.active": {
-                      bgcolor: "#1976d2",
+                      bgcolor: "primary.main",
                       color: "#ffffff",
+
+                      boxShadow:
+                        "0 4px 12px rgba(25,118,210,0.25)",
 
                       "& .MuiListItemIcon-root": {
                         color: "#ffffff",
                       },
-                    },
 
-                    "&:hover": {
-                      bgcolor: "#1976d2",
-                      color: "#ffffff",
-
-                      "& .MuiListItemIcon-root": {
-                        color: "#ffffff",
+                      "&:hover": {
+                        bgcolor: "primary.dark",
                       },
                     },
                   }}
                 >
+
                   <ListItemIcon>
                     {item.icon}
                   </ListItemIcon>
 
                   <ListItemText
                     primary={item.text}
+                    primaryTypographyProps={{
+                      fontWeight: 600,
+                      fontSize: 14,
+                    }}
                   />
+
                 </ListItemButton>
+
               </ListItem>
+
             ))
+
           )}
+
         </List>
+
       </Box>
 
-      {/* ================= LOGOUT ================= */}
+      {/* ================= BOTTOM ================= */}
 
-      <Box sx={{ p: 2 }}>
-        <Divider sx={{ mb: 2 }} />
+      <Box sx={{ p: 1.5 }}>
 
-        <ListItem disablePadding>
+        <Divider sx={{ mb: 1.5 }} />
+
+        <ListItem
+          disablePadding
+        >
+
           <ListItemButton
             onClick={handleLogout}
             sx={{
-              borderRadius: 3,
-              color: "#d32f2f",
+              minHeight: 48,
+              px: 1.8,
+              borderRadius: 2.5,
+
+              color: "error.main",
+
+              "& .MuiListItemIcon-root": {
+                minWidth: 42,
+                color: "error.main",
+              },
 
               "&:hover": {
-                bgcolor: "#ffebee",
+                bgcolor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(244,67,54,0.12)"
+                    : "#ffebee",
               },
             }}
           >
-            <ListItemIcon
-              sx={{
-                color: "#d32f2f",
-              }}
-            >
+
+            <ListItemIcon>
               <LogoutRoundedIcon />
             </ListItemIcon>
 
-            <ListItemText primary="Logout" />
+            <ListItemText
+              primary="Logout"
+              primaryTypographyProps={{
+                fontWeight: 600,
+                fontSize: 14,
+              }}
+            />
+
           </ListItemButton>
+
         </ListItem>
+
       </Box>
+
     </Box>
   );
 
@@ -274,21 +386,33 @@ function Sidebar() {
       {/* ================= MOBILE MENU BUTTON ================= */}
 
       <IconButton
-        onClick={() => setMobileOpen(true)}
+        onClick={() =>
+          setMobileOpen(true)
+        }
         sx={{
           position: "fixed",
           top: 12,
           left: 12,
           zIndex: 1300,
+
           display: {
             xs: "flex",
             md: "none",
           },
-          bgcolor: "#ffffff",
+
+          bgcolor:
+            theme.palette.background.paper,
+
+          color: "text.primary",
+
+          border:
+            `1px solid ${theme.palette.divider}`,
+
           boxShadow: 2,
 
           "&:hover": {
-            bgcolor: "#ffffff",
+            bgcolor:
+              theme.palette.action.hover,
           },
         }}
       >
@@ -311,8 +435,14 @@ function Sidebar() {
           "& .MuiDrawer-paper": {
             width: drawerWidth,
             boxSizing: "border-box",
-            bgcolor: "#ffffff",
-            borderRight: "1px solid #e5e7eb",
+
+            bgcolor:
+              "background.paper",
+
+            color: "text.primary",
+
+            borderRight:
+              `1px solid ${theme.palette.divider}`,
           },
         }}
       >
@@ -324,7 +454,9 @@ function Sidebar() {
       <Drawer
         variant="temporary"
         open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
+        onClose={() =>
+          setMobileOpen(false)
+        }
         ModalProps={{
           keepMounted: true,
         }}
@@ -337,7 +469,11 @@ function Sidebar() {
           "& .MuiDrawer-paper": {
             width: drawerWidth,
             boxSizing: "border-box",
-            bgcolor: "#ffffff",
+
+            bgcolor:
+              "background.paper",
+
+            color: "text.primary",
           },
         }}
       >
