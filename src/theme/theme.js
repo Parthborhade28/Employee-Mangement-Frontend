@@ -1,103 +1,165 @@
 import { createTheme } from "@mui/material/styles";
 
-const theme = createTheme({
+const getTheme = (mode) => {
+  const dark = mode === "dark";
 
-  palette: {
-    primary: {
-      main: "#1976d2",
+  return createTheme({
+    palette: {
+      mode,
+
+      primary: {
+        main: "#1976d2",
+      },
+
+      background: {
+        default: dark ? "#0f172a" : "#f5f7fb",
+        paper: dark ? "#1e293b" : "#ffffff",
+      },
+
+      text: {
+        primary: dark ? "#f8fafc" : "#111827",
+        secondary: dark ? "#94a3b8" : "#6b7280",
+      },
+
+      divider: dark
+        ? "#334155"
+        : "#e5e7eb",
     },
 
-    secondary: {
-      main: "#2e7d32",
+    typography: {
+      fontFamily:
+        "Roboto, Arial, sans-serif",
     },
 
-    success: {
-      main: "#2e7d32",
+    shape: {
+      borderRadius: 10,
     },
 
-    error: {
-      main: "#d32f2f",
-    },
+    components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          body: {
+            backgroundColor: dark
+              ? "#0f172a"
+              : "#f5f7fb",
 
-    warning: {
-      main: "#ed6c02",
-    },
+            color: dark
+              ? "#f8fafc"
+              : "#111827",
 
-    background: {
-      default: "#f5f7fb",
-      paper: "#ffffff",
-    },
-  },
-
-  typography: {
-    fontFamily: "Poppins, Roboto, sans-serif",
-
-    h4: {
-      fontWeight: 700,
-    },
-
-    h5: {
-      fontWeight: 700,
-    },
-
-    button: {
-      textTransform: "none",
-      fontWeight: 600,
-    },
-  },
-
-  shape: {
-    borderRadius: 12,
-  },
-
-  components: {
-
-    MuiButton: {
-
-      styleOverrides: {
-
-        root: {
-
-          borderRadius: 12,
-
-          height: 45,
-
+            transition:
+              "background-color 0.25s ease, color 0.25s ease",
+          },
         },
-
       },
 
-    },
-
-    MuiCard: {
-
-      styleOverrides: {
-
-        root: {
-
-          borderRadius: 16,
-
-          boxShadow: "0 5px 20px rgba(0,0,0,.06)",
-
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundImage: "none",
+          },
         },
-
       },
 
-    },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            backgroundColor: dark
+              ? "#1e293b"
+              : "#ffffff",
 
-    MuiTextField: {
+            color: dark
+              ? "#f8fafc"
+              : "#111827",
 
-      defaultProps: {
-
-        fullWidth: true,
-
-        variant: "outlined",
-
+            borderColor: dark
+              ? "#334155"
+              : "#e5e7eb",
+          },
+        },
       },
 
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: dark
+                  ? "#475569"
+                  : "#cbd5e1",
+              },
+
+              "&:hover fieldset": {
+                borderColor: dark
+                  ? "#64748b"
+                  : "#94a3b8",
+              },
+
+              "&.Mui-focused fieldset": {
+                borderColor: "#1976d2",
+              },
+            },
+
+            "& .MuiInputLabel-root": {
+              color: dark
+                ? "#94a3b8"
+                : "#6b7280",
+            },
+
+            "& .MuiInputBase-input": {
+              color: dark
+                ? "#f8fafc"
+                : "#111827",
+            },
+          },
+        },
+      },
+
+      MuiDrawer: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: dark
+              ? "#111827"
+              : "#ffffff",
+
+            color: dark
+              ? "#f8fafc"
+              : "#111827",
+
+            borderColor: dark
+              ? "#334155"
+              : "#e5e7eb",
+          },
+        },
+      },
+
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: dark
+              ? "#111827"
+              : "#ffffff",
+
+            color: dark
+              ? "#f8fafc"
+              : "#111827",
+
+            backgroundImage: "none",
+          },
+        },
+      },
+
+      MuiDivider: {
+        styleOverrides: {
+          root: {
+            borderColor: dark
+              ? "#334155"
+              : "#e5e7eb",
+          },
+        },
+      },
     },
+  });
+};
 
-  },
-
-});
-
-export default theme;
+export default getTheme;
