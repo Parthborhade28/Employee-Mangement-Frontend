@@ -8,7 +8,6 @@ API.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
 
-    // Don't attach JWT to public authentication endpoints
     const publicEndpoints = [
       "/auth/login",
       "/auth/register",
@@ -17,10 +16,18 @@ API.interceptors.request.use(
       "/auth/reset-password",
     ];
 
-    if (
-      token &&
-      !publicEndpoints.includes(config.url)
-    ) {
+    const isPublicEndpoint = publicEndpoints.includes(config.url);
+
+    console.log(
+      "AXIOS REQUEST:",
+      config.method?.toUpperCase(),
+      config.url,
+      "TOKEN EXISTS:",
+      !!token
+    );
+
+    if (token && !isPublicEndpoint) {
+      config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
 
