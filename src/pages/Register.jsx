@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Box,
@@ -23,9 +23,6 @@ import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
-import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
-import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
-import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
 
 import { celebrate } from "../components/ConfettiCelebration";
 import { register } from "../services/authService";
@@ -46,50 +43,38 @@ function Register() {
   });
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-
+    setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
   };
 
-  // Password strength
   const getPasswordStrength = () => {
     const password = form.password;
 
-    if (!password) {
-      return { value: 0, text: "", color: "#94a3b8" };
-    }
+    if (!password) return { value: 0, text: "", color: "#94a3b8" };
 
     let strength = 0;
-
     if (password.length >= 6) strength += 25;
     if (/[A-Z]/.test(password)) strength += 25;
     if (/[0-9]/.test(password)) strength += 25;
     if (/[^A-Za-z0-9]/.test(password)) strength += 25;
 
-    if (strength >= 75) {
+    if (strength >= 75)
       return { value: strength, text: "Strong", color: "#16a34a" };
-    }
 
-    if (strength >= 50) {
+    if (strength >= 50)
       return { value: strength, text: "Medium", color: "#d97706" };
-    }
 
     return { value: strength, text: "Weak", color: "#dc2626" };
   };
 
   const passwordStrength = getPasswordStrength();
 
-  // Register
   const handleRegister = async (e) => {
     e.preventDefault();
 
     if (loading || success) return;
 
     setError("");
-    setSuccess(false);
 
     const name = form.name.trim();
     const email = form.email.trim();
@@ -112,28 +97,19 @@ function Register() {
     setLoading(true);
     setSlowConnection(false);
 
-    const slowTimer = setTimeout(() => {
-      setSlowConnection(true);
-    }, 5000);
+    const slowTimer = setTimeout(() => setSlowConnection(true), 5000);
 
     try {
-      await register({
-        name,
-        email,
-        password: form.password,
-      });
+      await register({ name, email, password: form.password });
 
       setSuccess(true);
       celebrate();
 
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
-    } catch (error) {
-      console.error("Registration error:", error);
-
+      setTimeout(() => navigate("/"), 1500);
+    } catch (err) {
+      console.error("Registration error:", err);
       setError(
-        error.response?.data?.message ||
+        err.response?.data?.message ||
           "Registration failed. Please try again."
       );
     } finally {
@@ -141,6 +117,49 @@ function Register() {
       setLoading(false);
       setSlowConnection(false);
     }
+  };
+
+  // Shared styling used only by registration inputs
+  const fieldSx = {
+    mb: 2.2,
+    "& .MuiOutlinedInput-root": {
+      minHeight: 52,
+      borderRadius: 2.5,
+      bgcolor: "#eef4ff",
+      transition: "background-color 0.2s ease",
+      "& fieldset": { borderColor: "#cbd8f0" },
+      "&:hover fieldset": { borderColor: "#7195e8" },
+      "&.Mui-focused": { bgcolor: "#ffffff" },
+      "&.Mui-focused fieldset": {
+        borderColor: "#2456d9",
+        borderWidth: 2,
+      },
+    },
+    "& .MuiInputBase-input": {
+      color: "#17233e",
+      WebkitTextFillColor: "#17233e",
+    },
+    "& .MuiInputBase-input::placeholder": {
+      color: "#7b879b",
+      opacity: 1,
+    },
+    // Prevent Chrome autofill from making the input white
+    "& input:-webkit-autofill": {
+      WebkitBoxShadow: "0 0 0 100px #eef4ff inset",
+      WebkitTextFillColor: "#17233e",
+      caretColor: "#17233e",
+      borderRadius: "inherit",
+    },
+    "& input:-webkit-autofill:focus": {
+      WebkitBoxShadow: "0 0 0 100px #ffffff inset",
+    },
+  };
+
+  const labelSx = {
+    mb: 1,
+    fontWeight: 700,
+    fontSize: 13,
+    color: "#34415a",
   };
 
   return (
@@ -159,7 +178,7 @@ function Register() {
         bgcolor: "#101828",
       }}
     >
-      {/* BACKGROUND VIDEO */}
+      {/* VIDEO BACKGROUND */}
       <Box
         component="video"
         autoPlay
@@ -202,10 +221,7 @@ function Register() {
           width: "100%",
           maxWidth: 1100,
           display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            md: "0.95fr 1.05fr",
-          },
+          gridTemplateColumns: { xs: "1fr", md: "0.95fr 1.05fr" },
           overflow: "hidden",
           borderRadius: { xs: 0, sm: 4 },
           bgcolor: "rgba(255,255,255,0.96)",
@@ -227,7 +243,6 @@ function Register() {
             overflow: "hidden",
           }}
         >
-          {/* Decorative circles */}
           <Box
             sx={{
               position: "absolute",
@@ -237,18 +252,6 @@ function Register() {
               borderRadius: "50%",
               top: 170,
               right: -120,
-            }}
-          />
-
-          <Box
-            sx={{
-              position: "absolute",
-              width: 220,
-              height: 220,
-              border: "1px solid rgba(255,255,255,0.12)",
-              borderRadius: "50%",
-              top: 210,
-              right: -80,
             }}
           />
 
@@ -267,20 +270,18 @@ function Register() {
               >
                 <BusinessRoundedIcon sx={{ fontSize: 29 }} />
               </Box>
-
               <Typography variant="h6" fontWeight={800}>
                 PeopleDesk
               </Typography>
             </Box>
 
-            <Box sx={{ mt: 8 }}>
+            <Box sx={{ mt: 9 }}>
               <Typography
                 sx={{
-                  fontSize: { md: 34, lg: 40 },
+                  fontSize: { md: 35, lg: 42 },
                   fontWeight: 800,
                   lineHeight: 1.2,
                   letterSpacing: -1.2,
-                  maxWidth: 390,
                 }}
               >
                 Great teams
@@ -297,36 +298,18 @@ function Register() {
                   maxWidth: 370,
                 }}
               >
-                Create your account and bring your employee
-                information, team records, and workplace
-                management together in one place.
+                Create your account and bring your employee information,
+                team records, and workplace management together in one place.
               </Typography>
             </Box>
 
             <Box sx={{ mt: 5, display: "grid", gap: 2.5 }}>
               {[
-                {
-                  icon: <GroupsRoundedIcon />,
-                  title: "Organize your team",
-                  desc: "Keep employee records in one place.",
-                },
-                {
-                  icon: <TaskAltRoundedIcon />,
-                  title: "Simplify your workflow",
-                  desc: "Make everyday management easier.",
-                },
-                {
-                  icon: <InsightsRoundedIcon />,
-                  title: "Stay organized",
-                  desc: "Access your workforce information.",
-                },
-              ].map((item) => (
-                <Box
-                  key={item.title}
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
+                ["Organize your team", "Keep employee records in one place."],
+                ["Simplify your workflow", "Make everyday management easier."],
+                ["Stay organized", "Access your workforce information."],
+              ].map(([title, desc]) => (
+                <Box key={title} display="flex" alignItems="center" gap={2}>
                   <Box
                     sx={{
                       width: 43,
@@ -338,21 +321,17 @@ function Register() {
                       bgcolor: "rgba(255,255,255,0.14)",
                     }}
                   >
-                    {item.icon}
+                    <TaskAltRoundedIcon />
                   </Box>
-
                   <Box>
                     <Typography fontWeight={700} fontSize={14}>
-                      {item.title}
+                      {title}
                     </Typography>
                     <Typography
                       fontSize={12}
-                      sx={{
-                        color: "rgba(255,255,255,0.75)",
-                        mt: 0.4,
-                      }}
+                      sx={{ color: "rgba(255,255,255,0.75)", mt: 0.4 }}
                     >
-                      {item.desc}
+                      {desc}
                     </Typography>
                   </Box>
                 </Box>
@@ -373,7 +352,7 @@ function Register() {
           </Typography>
         </Box>
 
-        {/* RIGHT REGISTRATION PANEL */}
+        {/* REGISTRATION FORM */}
         <Box
           sx={{
             display: "flex",
@@ -385,7 +364,6 @@ function Register() {
           }}
         >
           <Box sx={{ width: "100%", maxWidth: 390, mx: "auto" }}>
-            {/* Mobile logo */}
             <Box
               sx={{
                 display: { xs: "flex", md: "none" },
@@ -402,7 +380,6 @@ function Register() {
                   placeItems: "center",
                   color: "#fff",
                   bgcolor: "#2456d9",
-                  boxShadow: "0 8px 22px rgba(36,86,217,0.25)",
                 }}
               >
                 <PersonAddRoundedIcon sx={{ fontSize: 32 }} />
@@ -423,7 +400,6 @@ function Register() {
             </Typography>
 
             <Typography
-              variant="h4"
               sx={{
                 mt: 1,
                 fontSize: { xs: 27, sm: 32 },
@@ -468,17 +444,7 @@ function Register() {
             )}
 
             <Box component="form" onSubmit={handleRegister}>
-              {/* FULL NAME */}
-              <Typography
-                sx={{
-                  mb: 1,
-                  fontWeight: 700,
-                  fontSize: 13,
-                  color: "#34415a",
-                }}
-              >
-                Full name
-              </Typography>
+              <Typography sx={labelSx}>Full name</Typography>
 
               <TextField
                 fullWidth
@@ -490,17 +456,7 @@ function Register() {
                 autoComplete="name"
                 required
                 inputProps={{ minLength: 2, maxLength: 100 }}
-                sx={{
-                  mb: 2.2,
-                  "& .MuiOutlinedInput-root": {
-                    height: 52,
-                    borderRadius: 2.5,
-                    bgcolor: "#fbfcff",
-                    "& fieldset": { borderColor: "#e1e7f0" },
-                    "&:hover fieldset": { borderColor: "#9aadd8" },
-                    "&.Mui-focused fieldset": { borderColor: "#2456d9" },
-                  },
-                }}
+                sx={fieldSx}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -510,17 +466,7 @@ function Register() {
                 }}
               />
 
-              {/* EMAIL */}
-              <Typography
-                sx={{
-                  mb: 1,
-                  fontWeight: 700,
-                  fontSize: 13,
-                  color: "#34415a",
-                }}
-              >
-                Email address
-              </Typography>
+              <Typography sx={labelSx}>Email address</Typography>
 
               <TextField
                 fullWidth
@@ -532,17 +478,7 @@ function Register() {
                 disabled={loading || success}
                 autoComplete="email"
                 required
-                sx={{
-                  mb: 2.2,
-                  "& .MuiOutlinedInput-root": {
-                    height: 52,
-                    borderRadius: 2.5,
-                    bgcolor: "#fbfcff",
-                    "& fieldset": { borderColor: "#e1e7f0" },
-                    "&:hover fieldset": { borderColor: "#9aadd8" },
-                    "&.Mui-focused fieldset": { borderColor: "#2456d9" },
-                  },
-                }}
+                sx={fieldSx}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -552,17 +488,7 @@ function Register() {
                 }}
               />
 
-              {/* PASSWORD */}
-              <Typography
-                sx={{
-                  mb: 1,
-                  fontWeight: 700,
-                  fontSize: 13,
-                  color: "#34415a",
-                }}
-              >
-                Password
-              </Typography>
+              <Typography sx={labelSx}>Password</Typography>
 
               <TextField
                 fullWidth
@@ -575,16 +501,7 @@ function Register() {
                 autoComplete="new-password"
                 required
                 inputProps={{ minLength: 6 }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    height: 52,
-                    borderRadius: 2.5,
-                    bgcolor: "#fbfcff",
-                    "& fieldset": { borderColor: "#e1e7f0" },
-                    "&:hover fieldset": { borderColor: "#9aadd8" },
-                    "&.Mui-focused fieldset": { borderColor: "#2456d9" },
-                  },
-                }}
+                sx={fieldSx}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -610,18 +527,12 @@ function Register() {
                 }}
               />
 
-              {/* PASSWORD STRENGTH */}
               {form.password && (
-                <Box sx={{ mt: 1.2 }}>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    mb={0.6}
-                  >
+                <Box sx={{ mt: -1.2, mb: 2 }}>
+                  <Box display="flex" justifyContent="space-between" mb={0.6}>
                     <Typography fontSize={12} color="#778198">
                       Password strength
                     </Typography>
-
                     <Typography
                       fontSize={12}
                       fontWeight={700}
@@ -645,22 +556,19 @@ function Register() {
                     }}
                   />
 
-                  <Typography
-                    sx={{ mt: 0.7, fontSize: 11, color: "#8993a6" }}
-                  >
+                  <Typography sx={{ mt: 0.7, fontSize: 11, color: "#8993a6" }}>
                     Use 6+ characters, uppercase letters, numbers and symbols.
                   </Typography>
                 </Box>
               )}
 
-              {/* REGISTER BUTTON */}
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 disabled={loading || success}
                 sx={{
-                  mt: 3,
+                  mt: 1.5,
                   height: 53,
                   borderRadius: 2.5,
                   textTransform: "none",
@@ -671,10 +579,6 @@ function Register() {
                   "&:hover": {
                     bgcolor: "#1946bf",
                     boxShadow: "0 10px 25px rgba(36,86,217,0.28)",
-                  },
-                  "&.Mui-disabled": {
-                    bgcolor: "#91a8e8",
-                    color: "#fff",
                   },
                 }}
               >
@@ -695,10 +599,7 @@ function Register() {
 
             <Divider sx={{ my: 2.5, borderColor: "#edf0f5" }} />
 
-            <Typography
-              textAlign="center"
-              sx={{ fontSize: 13, color: "#778198" }}
-            >
+            <Typography textAlign="center" sx={{ fontSize: 13, color: "#778198" }}>
               Already have an account?
               <Link
                 to="/"
