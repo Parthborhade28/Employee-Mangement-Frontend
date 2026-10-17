@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Box,
@@ -11,7 +11,6 @@ import {
   IconButton,
   CircularProgress,
   Alert,
-  Divider,
 } from "@mui/material";
 
 import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
@@ -20,11 +19,52 @@ import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
 import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
-import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
-import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
+import EventAvailableRoundedIcon from "@mui/icons-material/EventAvailableRounded";
+import ShieldRoundedIcon from "@mui/icons-material/ShieldRounded";
 
 import { celebrate } from "../components/ConfettiCelebration";
 import { login } from "../services/authService";
+
+/* ---------- design tokens ---------- */
+const INK = "#0e1a2b";
+const TEAL = "#0f766e";
+const TEAL_DARK = "#0b5c56";
+const MUTED = "#5b6678";
+const LINE = "#d9e0ea";
+const FIELD_BG = "#f6f8fb";
+
+const FONT =
+  '"Plus Jakarta Sans", "Inter", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif';
+
+const fieldSx = {
+  "& .MuiOutlinedInput-root": {
+    borderRadius: 2,
+    bgcolor: FIELD_BG,
+    fontSize: 15,
+    transition: "background-color .2s, box-shadow .2s",
+    "& fieldset": { borderColor: LINE },
+    "&:hover fieldset": { borderColor: "#9fb0c8" },
+    "&.Mui-focused": {
+      bgcolor: "#fff",
+      boxShadow: "0 0 0 4px rgba(15,118,110,0.14)",
+    },
+    "&.Mui-focused fieldset": { borderColor: TEAL, borderWidth: 1.5 },
+  },
+  "& .MuiOutlinedInput-input": { py: 1.65 },
+};
+
+const labelSx = {
+  fontWeight: 600,
+  fontSize: 13.5,
+  color: INK,
+  mb: 0.75,
+};
+
+const highlights = [
+  { icon: GroupsRoundedIcon, text: "Employee records in one place" },
+  { icon: EventAvailableRoundedIcon, text: "Leave and attendance at a glance" },
+  { icon: ShieldRoundedIcon, text: "Access limited to your team" },
+];
 
 function Login() {
   const navigate = useNavigate();
@@ -49,12 +89,12 @@ function Login() {
   };
 
   const handleLogin = async (e) => {
-    e?.preventDefault();
+    e.preventDefault();
 
     if (loading) return;
 
     if (!form.email.trim() || !form.password) {
-      setErrorMessage("Please enter your email and password.");
+      setErrorMessage("Enter your email and password to sign in.");
       return;
     }
 
@@ -73,7 +113,7 @@ function Login() {
       });
 
       if (!response?.token) {
-        throw new Error("The server did not return an authentication token.");
+        throw new Error("Authentication token was not received.");
       }
 
       localStorage.setItem("token", response.token);
@@ -89,7 +129,7 @@ function Login() {
       setErrorMessage(
         error.response?.data?.message ||
           error.message ||
-          "Unable to login. Please try again."
+          "Unable to sign in. Check your details and try again."
       );
     } finally {
       clearTimeout(slowTimer);
@@ -102,469 +142,373 @@ function Login() {
     <Box
       sx={{
         minHeight: "100vh",
+        "@supports (min-height: 100dvh)": { minHeight: "100dvh" },
+        width: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        bgcolor: "#f4f7fc",
-        p: { xs: 0, sm: 3, md: 5 },
-        fontFamily: "'Inter', sans-serif",
+        position: "relative",
+        overflow: "hidden",
+        boxSizing: "border-box",
+        fontFamily: FONT,
+        bgcolor: INK,
+        px: { xs: 2, sm: 4, lg: 8 },
+        py: { xs: 3, sm: 5 },
       }}
     >
-      <Paper
-        elevation={0}
+      {/* BACKGROUND VIDEO (hidden for users who prefer reduced motion) */}
+      <Box
+        component="video"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        aria-hidden="true"
         sx={{
+          position: "fixed",
+          inset: 0,
           width: "100%",
-          maxWidth: 1100,
-          minHeight: { md: 650 },
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "0.95fr 1.05fr" },
-          overflow: "hidden",
-          borderRadius: { xs: 0, sm: 4 },
-          border: { xs: "none", sm: "1px solid #e7ecf5" },
-          boxShadow: {
-            xs: "none",
-            sm: "0 24px 70px rgba(29, 51, 89, 0.10)",
-          },
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center",
+          zIndex: 0,
+          "@media (prefers-reduced-motion: reduce)": { display: "none" },
         }}
       >
-        {/* LEFT BRAND PANEL */}
-        <Box
-          sx={{
-            display: { xs: "none", md: "flex" },
-            flexDirection: "column",
-            justifyContent: "space-between",
-            p: 5,
-            color: "#fff",
-            background:
-              "linear-gradient(145deg, #173fbd 0%, #2463eb 55%, #5687ff 100%)",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              width: 300,
-              height: 300,
-              border: "1px solid rgba(255,255,255,0.15)",
-              borderRadius: "50%",
-              top: 170,
-              right: -120,
-            }}
-          />
+        <source src="/IMG_1446.MOV" type="video/quicktime" />
+        <source src="/IMG_1446.MOV" type="video/mp4" />
+      </Box>
 
-          <Box
-            sx={{
-              position: "absolute",
-              width: 220,
-              height: 220,
-              border: "1px solid rgba(255,255,255,0.12)",
-              borderRadius: "50%",
-              top: 210,
-              right: -80,
-            }}
-          />
+      {/* OVERLAY: darker on the left where the text sits */}
+      <Box
+        sx={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 1,
+          background: {
+            xs: "rgba(14, 26, 43, 0.72)",
+            md: "linear-gradient(100deg, rgba(14,26,43,0.9) 0%, rgba(14,26,43,0.68) 48%, rgba(14,26,43,0.45) 100%)",
+          },
+        }}
+      />
 
-          <Box sx={{ position: "relative", zIndex: 1 }}>
-            <Box display="flex" alignItems="center" gap={1.5}>
-              <Box
-                sx={{
-                  width: 46,
-                  height: 46,
-                  borderRadius: 2.5,
-                  bgcolor: "#fff",
-                  color: "#2456d9",
-                  display: "grid",
-                  placeItems: "center",
-                }}
-              >
-                <BusinessRoundedIcon sx={{ fontSize: 29 }} />
-              </Box>
-
-              <Typography variant="h6" fontWeight={800}>
-                PeopleDesk
-              </Typography>
+      {/* CONTENT */}
+      <Box
+        sx={{
+          position: "relative",
+          zIndex: 2,
+          width: "100%",
+          maxWidth: 1120,
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "1.1fr 0.9fr" },
+          alignItems: "center",
+          gap: { md: 6, lg: 10 },
+        }}
+      >
+        {/* BRAND PANEL (tablet and up) */}
+        <Box sx={{ display: { xs: "none", md: "block" }, color: "#fff" }}>
+          <Box display="flex" alignItems="center" gap={1.5} mb={5}>
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                display: "grid",
+                placeItems: "center",
+                borderRadius: 2,
+                bgcolor: TEAL,
+              }}
+            >
+              <BusinessRoundedIcon sx={{ fontSize: 26 }} />
             </Box>
-
-            <Box sx={{ mt: 10 }}>
-              <Typography
-                sx={{
-                  fontSize: { md: 35, lg: 42 },
-                  fontWeight: 800,
-                  lineHeight: 1.2,
-                  letterSpacing: -1.2,
-                  maxWidth: 390,
-                }}
-              >
-                Your people.
-                <br />
-                Your workplace.
-                <br />
-                One platform.
-              </Typography>
-
-              <Typography
-                sx={{
-                  mt: 2.5,
-                  color: "rgba(255,255,255,0.82)",
-                  lineHeight: 1.9,
-                  fontSize: 15,
-                  maxWidth: 370,
-                }}
-              >
-                Manage your workforce, organize employee information,
-                and keep your team connected from one simple dashboard.
-              </Typography>
-            </Box>
-
-            <Box sx={{ mt: 5, display: "grid", gap: 2.5 }}>
-              {[
-                {
-                  icon: <GroupsRoundedIcon />,
-                  title: "Employee directory",
-                  desc: "Keep employee information organized.",
-                },
-                {
-                  icon: <TaskAltRoundedIcon />,
-                  title: "Simplified management",
-                  desc: "Manage records in one convenient place.",
-                },
-                {
-                  icon: <InsightsRoundedIcon />,
-                  title: "A clearer overview",
-                  desc: "Access your workforce information quickly.",
-                },
-              ].map((item) => (
-                <Box
-                  key={item.title}
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
-                  <Box
-                    sx={{
-                      width: 43,
-                      height: 43,
-                      flexShrink: 0,
-                      borderRadius: 2,
-                      display: "grid",
-                      placeItems: "center",
-                      bgcolor: "rgba(255,255,255,0.14)",
-                    }}
-                  >
-                    {item.icon}
-                  </Box>
-
-                  <Box>
-                    <Typography fontWeight={700} fontSize={14}>
-                      {item.title}
-                    </Typography>
-                    <Typography
-                      fontSize={12}
-                      sx={{ color: "rgba(255,255,255,0.75)", mt: 0.4 }}
-                    >
-                      {item.desc}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
+            <Typography fontWeight={700} fontSize={18} letterSpacing={-0.2}>
+              Employee Management
+            </Typography>
           </Box>
 
           <Typography
+            component="h1"
             sx={{
-              position: "relative",
-              zIndex: 1,
-              mt: 5,
-              fontSize: 12,
-              color: "rgba(255,255,255,0.7)",
+              fontWeight: 800,
+              fontSize: { md: 40, lg: 52 },
+              lineHeight: 1.08,
+              letterSpacing: "-0.03em",
+              maxWidth: 520,
             }}
           >
-            © {new Date().getFullYear()} PeopleDesk. Built for better teamwork.
+            Run your team from one dashboard.
           </Typography>
+
+          <Typography
+            sx={{
+              mt: 2.5,
+              maxWidth: 440,
+              fontSize: 16.5,
+              lineHeight: 1.6,
+              color: "rgba(255,255,255,0.78)",
+            }}
+          >
+            Sign in to manage people, track time off, and keep records
+            current.
+          </Typography>
+
+          <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0, mt: 5 }}>
+            {highlights.map(({ icon: Icon, text }) => (
+              <Box
+                component="li"
+                key={text}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                  mb: 1.75,
+                  fontSize: 15,
+                  color: "rgba(255,255,255,0.9)",
+                }}
+              >
+                <Icon sx={{ fontSize: 20, color: "#5eead4" }} />
+                {text}
+              </Box>
+            ))}
+          </Box>
         </Box>
 
-        {/* RIGHT LOGIN PANEL */}
-        <Box
+        {/* LOGIN CARD */}
+        <Paper
+          elevation={0}
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            px: { xs: 3, sm: 6, md: 7 },
-            py: { xs: 5, sm: 6 },
-            bgcolor: "#ffffff",
+            width: "100%",
+            maxWidth: { xs: 440, md: 460 },
+            justifySelf: { xs: "center", md: "end" },
+            boxSizing: "border-box",
+            p: { xs: 3, sm: 5 },
+            borderRadius: { xs: 3, sm: 4 },
+            bgcolor: "#fff",
+            boxShadow: "0 30px 80px rgba(0, 0, 0, 0.35)",
+            "@keyframes cardIn": {
+              from: { opacity: 0, transform: "translateY(14px)" },
+              to: { opacity: 1, transform: "translateY(0)" },
+            },
+            animation: "cardIn .55s cubic-bezier(.2,.7,.2,1) both",
+            "@media (prefers-reduced-motion: reduce)": { animation: "none" },
           }}
         >
-          <Box sx={{ width: "100%", maxWidth: 390, mx: "auto" }}>
+          {/* Compact brand, mobile only (the brand panel covers desktop) */}
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
+              alignItems: "center",
+              gap: 1.5,
+              mb: 3,
+            }}
+          >
             <Box
               sx={{
-                display: { xs: "flex", md: "none" },
-                justifyContent: "center",
-                mb: 3,
+                width: 40,
+                height: 40,
+                display: "grid",
+                placeItems: "center",
+                borderRadius: 2,
+                color: "#fff",
+                bgcolor: TEAL,
               }}
             >
-              <Box
-                sx={{
-                  width: 58,
-                  height: 58,
-                  borderRadius: 3,
-                  display: "grid",
-                  placeItems: "center",
-                  color: "#fff",
-                  bgcolor: "#2456d9",
-                  boxShadow: "0 8px 22px rgba(36,86,217,0.25)",
-                }}
-              >
-                <BusinessRoundedIcon sx={{ fontSize: 34 }} />
-              </Box>
+              <BusinessRoundedIcon sx={{ fontSize: 24 }} />
             </Box>
+            <Typography fontWeight={700} fontSize={16} color={INK}>
+              Employee Management
+            </Typography>
+          </Box>
 
-            <Typography
-              sx={{
-                fontSize: 13,
-                fontWeight: 700,
-                color: "#2456d9",
-                letterSpacing: 1.4,
-                textAlign: { xs: "center", md: "left" },
-                textTransform: "uppercase",
-              }}
-            >
-              Welcome back
+          <Typography
+            component="h2"
+            sx={{
+              fontWeight: 800,
+              fontSize: { xs: 26, sm: 30 },
+              letterSpacing: "-0.02em",
+              color: INK,
+              lineHeight: 1.15,
+            }}
+          >
+            Sign in
+          </Typography>
+
+          <Typography sx={{ color: MUTED, mt: 0.75, mb: 3.5, fontSize: 14.5 }}>
+            Use the email and password for your account.
+          </Typography>
+
+          {/* ERROR MESSAGE */}
+          {errorMessage && (
+            <Alert severity="error" sx={{ mb: 2.5, borderRadius: 2 }}>
+              {errorMessage}
+            </Alert>
+          )}
+
+          {/* COLD START MESSAGE */}
+          {slowConnection && loading && (
+            <Alert severity="info" sx={{ mb: 2.5, borderRadius: 2 }}>
+              <Typography fontWeight={700} fontSize={13}>
+                Starting the server
+              </Typography>
+              <Typography fontSize={12.5}>
+                This can take up to a minute after a period of inactivity.
+              </Typography>
+            </Alert>
+          )}
+
+          {/* LOGIN FORM */}
+          <Box component="form" onSubmit={handleLogin} noValidate={false}>
+            <Typography component="label" htmlFor="email" display="block" sx={labelSx}>
+              Email address
             </Typography>
 
-            <Typography
-              variant="h4"
-              sx={{
-                mt: 1,
-                fontSize: { xs: 28, sm: 33 },
-                fontWeight: 800,
-                color: "#17233e",
-                letterSpacing: -1,
-                textAlign: { xs: "center", md: "left" },
+            <TextField
+              id="email"
+              fullWidth
+              name="email"
+              type="email"
+              placeholder="you@company.com"
+              value={form.email}
+              onChange={handleChange}
+              disabled={loading}
+              autoComplete="email"
+              required
+              sx={{ ...fieldSx, mb: 2.5 }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EmailRoundedIcon sx={{ color: "#8591a5", fontSize: 20 }} />
+                  </InputAdornment>
+                ),
               }}
+            />
+
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              mb={0.75}
             >
-              Sign in to your account
-            </Typography>
-
-            <Typography
-              sx={{
-                mt: 1.5,
-                mb: 4,
-                fontSize: 14,
-                color: "#778198",
-                lineHeight: 1.8,
-                textAlign: { xs: "center", md: "left" },
-              }}
-            >
-              Enter your details to access your employee dashboard.
-            </Typography>
-
-            {errorMessage && (
-              <Alert severity="error" sx={{ mb: 2.5, borderRadius: 2 }}>
-                {errorMessage}
-              </Alert>
-            )}
-
-            {slowConnection && loading && (
-              <Alert severity="info" sx={{ mb: 2.5, borderRadius: 2 }}>
-                <Typography fontWeight={700} fontSize={13}>
-                  Connecting to the server...
-                </Typography>
-                <Typography fontSize={12}>
-                  The server may be waking up. Please wait while we
-                  process your login.
-                </Typography>
-              </Alert>
-            )}
-
-            <Box component="form" onSubmit={handleLogin}>
               <Typography
-                sx={{ mb: 1, fontWeight: 700, fontSize: 13, color: "#34415a" }}
+                component="label"
+                htmlFor="password"
+                sx={{ ...labelSx, mb: 0 }}
               >
-                Email address
+                Password
               </Typography>
 
-              <TextField
-                fullWidth
-                name="email"
-                type="email"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={handleChange}
-                disabled={loading}
-                autoComplete="email"
-                required
-                sx={{
-                  mb: 2.5,
-                  "& .MuiOutlinedInput-root": {
-                    height: 54,
-                    borderRadius: 2.5,
-                    bgcolor: "#fbfcff",
-                    "& fieldset": { borderColor: "#e1e7f0" },
-                    "&:hover fieldset": { borderColor: "#9aadd8" },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#2456d9",
-                      borderWidth: 1.5,
-                    },
-                  },
-                }}
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <EmailRoundedIcon sx={{ color: "#8a96ac", fontSize: 21 }} />
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
-
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-                mb={1}
-              >
-                <Typography
-                  sx={{ fontWeight: 700, fontSize: 13, color: "#34415a" }}
-                >
-                  Password
-                </Typography>
-
-                <Link
-                  to="/forgot-password"
-                  style={{
-                    color: "#2456d9",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    textDecoration: "none",
-                  }}
-                >
-                  Forgot password?
-                </Link>
-              </Box>
-
-              <TextField
-                fullWidth
-                name="password"
-                placeholder="Enter your password"
-                type={showPassword ? "text" : "password"}
-                value={form.password}
-                onChange={handleChange}
-                disabled={loading}
-                autoComplete="current-password"
-                required
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    height: 54,
-                    borderRadius: 2.5,
-                    bgcolor: "#fbfcff",
-                    "& fieldset": { borderColor: "#e1e7f0" },
-                    "&:hover fieldset": { borderColor: "#9aadd8" },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#2456d9",
-                      borderWidth: 1.5,
-                    },
-                  },
-                }}
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LockRoundedIcon sx={{ color: "#8a96ac", fontSize: 21 }} />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label={showPassword ? "Hide password" : "Show password"}
-                          onClick={() => setShowPassword((prev) => !prev)}
-                          edge="end"
-                          disabled={loading}
-                        >
-                          {showPassword ? (
-                            <VisibilityOffRoundedIcon />
-                          ) : (
-                            <VisibilityRoundedIcon />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={loading}
-                sx={{
-                  mt: 3.5,
-                  height: 54,
-                  borderRadius: 2.5,
-                  textTransform: "none",
-                  fontSize: 15,
-                  fontWeight: 700,
-                  bgcolor: "#2456d9",
-                  boxShadow: "0 8px 20px rgba(36,86,217,0.2)",
-                  "&:hover": {
-                    bgcolor: "#1946bf",
-                    boxShadow: "0 10px 25px rgba(36,86,217,0.28)",
-                  },
-                  "&.Mui-disabled": {
-                    bgcolor: "#91a8e8",
-                    color: "#fff",
-                  },
-                }}
-              >
-                {loading ? (
-                  <Box display="flex" alignItems="center" gap={1.5}>
-                    <CircularProgress size={20} color="inherit" />
-                    <span>
-                      {slowConnection ? "Starting server..." : "Signing in..."}
-                    </span>
-                  </Box>
-                ) : (
-                  "Sign in"
-                )}
-              </Button>
-            </Box>
-
-            <Divider sx={{ my: 3, borderColor: "#edf0f5" }} />
-
-            <Typography
-              textAlign="center"
-              sx={{ fontSize: 13, color: "#778198" }}
-            >
-              New to PeopleDesk?
               <Link
-                to="/register"
+                to="/forgot-password"
                 style={{
-                  marginLeft: 5,
-                  color: "#2456d9",
-                  fontWeight: 700,
+                  fontSize: 13,
+                  color: TEAL,
+                  fontWeight: 600,
                   textDecoration: "none",
                 }}
               >
-                Create an account
+                Forgot password?
               </Link>
-            </Typography>
+            </Box>
 
-            <Typography
+            <TextField
+              id="password"
+              fullWidth
+              name="password"
+              placeholder="Enter your password"
+              type={showPassword ? "text" : "password"}
+              value={form.password}
+              onChange={handleChange}
+              disabled={loading}
+              autoComplete="current-password"
+              required
+              sx={fieldSx}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockRoundedIcon sx={{ color: "#8591a5", fontSize: 20 }} />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
+                      onClick={() => setShowPassword((previous) => !previous)}
+                      disabled={loading}
+                      edge="end"
+                      sx={{ color: "#8591a5" }}
+                    >
+                      {showPassword ? (
+                        <VisibilityOffRoundedIcon fontSize="small" />
+                      ) : (
+                        <VisibilityRoundedIcon fontSize="small" />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            {/* LOGIN BUTTON */}
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              disabled={loading}
+              disableElevation
               sx={{
-                display: { xs: "block", md: "none" },
-                mt: 5,
-                textAlign: "center",
-                color: "#9aa3b5",
-                fontSize: 11,
+                mt: 3.5,
+                height: 52,
+                borderRadius: 2,
+                textTransform: "none",
+                fontSize: 15.5,
+                fontWeight: 700,
+                fontFamily: FONT,
+                bgcolor: TEAL,
+                transition: "background-color .2s, transform .1s",
+                "&:hover": { bgcolor: TEAL_DARK },
+                "&:active": { transform: "scale(0.99)" },
+                "&.Mui-disabled": { bgcolor: TEAL, opacity: 0.7, color: "#fff" },
+                "&.Mui-focusVisible": {
+                  outline: `3px solid ${TEAL}`,
+                  outlineOffset: 3,
+                },
               }}
             >
-              Employee Management System
-            </Typography>
+              {loading ? (
+                <Box display="flex" alignItems="center" gap={1.5}>
+                  <CircularProgress size={20} color="inherit" />
+                  <span>
+                    {slowConnection ? "Starting server..." : "Signing in..."}
+                  </span>
+                </Box>
+              ) : (
+                "Sign in"
+              )}
+            </Button>
           </Box>
-        </Box>
-      </Paper>
+
+          {/* REGISTER LINK */}
+          <Typography
+            textAlign="center"
+            sx={{ mt: 3.5, color: MUTED, fontSize: 14 }}
+          >
+            New here?
+            <Link
+              to="/register"
+              style={{
+                marginLeft: 6,
+                color: TEAL,
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              Create an account
+            </Link>
+          </Typography>
+        </Paper>
+      </Box>
     </Box>
   );
 }
