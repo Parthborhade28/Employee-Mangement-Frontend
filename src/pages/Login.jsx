@@ -26,6 +26,46 @@ import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
 import { celebrate } from "../components/ConfettiCelebration";
 import { login } from "../services/authService";
 
+const inputStyles = {
+  "& .MuiOutlinedInput-root": {
+    height: 54,
+    borderRadius: 2.5,
+    bgcolor: "#fbfcff",
+    "& fieldset": {
+      borderColor: "#e1e7f0",
+    },
+    "&:hover fieldset": {
+      borderColor: "#9aadd8",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#2456d9",
+      borderWidth: 1.5,
+    },
+  },
+
+  // Fix: Make typed text clearly visible
+  "& .MuiInputBase-input": {
+    color: "#17233e !important",
+    WebkitTextFillColor: "#17233e",
+    opacity: 1,
+    fontSize: 14,
+    fontWeight: 500,
+    caretColor: "#2456d9",
+    "&::placeholder": {
+      color: "#8a96ac",
+      WebkitTextFillColor: "#8a96ac",
+      opacity: 1,
+    },
+  },
+
+  // Fix text color when Chrome autofills a field
+  "& input:-webkit-autofill": {
+    WebkitTextFillColor: "#17233e",
+    caretColor: "#2456d9",
+    transition: "background-color 9999s ease-in-out 0s",
+  },
+};
+
 function Login() {
   const navigate = useNavigate();
 
@@ -49,7 +89,7 @@ function Login() {
   };
 
   const handleLogin = async (e) => {
-    e?.preventDefault();
+    e.preventDefault();
 
     if (loading) return;
 
@@ -73,7 +113,9 @@ function Login() {
       });
 
       if (!response?.token) {
-        throw new Error("The server did not return an authentication token.");
+        throw new Error(
+          "The server did not return an authentication token."
+        );
       }
 
       localStorage.setItem("token", response.token);
@@ -259,9 +301,13 @@ function Login() {
                     <Typography fontWeight={700} fontSize={14}>
                       {item.title}
                     </Typography>
+
                     <Typography
                       fontSize={12}
-                      sx={{ color: "rgba(255,255,255,0.75)", mt: 0.4 }}
+                      sx={{
+                        color: "rgba(255,255,255,0.75)",
+                        mt: 0.4,
+                      }}
                     >
                       {item.desc}
                     </Typography>
@@ -371,15 +417,20 @@ function Login() {
                   Connecting to the server...
                 </Typography>
                 <Typography fontSize={12}>
-                  The server may be waking up. Please wait while we
-                  process your login.
+                  The server may be waking up. Please wait while we process
+                  your login.
                 </Typography>
               </Alert>
             )}
 
             <Box component="form" onSubmit={handleLogin}>
               <Typography
-                sx={{ mb: 1, fontWeight: 700, fontSize: 13, color: "#34415a" }}
+                sx={{
+                  mb: 1,
+                  fontWeight: 700,
+                  fontSize: 13,
+                  color: "#34415a",
+                }}
               >
                 Email address
               </Typography>
@@ -394,25 +445,14 @@ function Login() {
                 disabled={loading}
                 autoComplete="email"
                 required
-                sx={{
-                  mb: 2.5,
-                  "& .MuiOutlinedInput-root": {
-                    height: 54,
-                    borderRadius: 2.5,
-                    bgcolor: "#fbfcff",
-                    "& fieldset": { borderColor: "#e1e7f0" },
-                    "&:hover fieldset": { borderColor: "#9aadd8" },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#2456d9",
-                      borderWidth: 1.5,
-                    },
-                  },
-                }}
+                sx={{ ...inputStyles, mb: 2.5 }}
                 slotProps={{
                   input: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <EmailRoundedIcon sx={{ color: "#8a96ac", fontSize: 21 }} />
+                        <EmailRoundedIcon
+                          sx={{ color: "#8a96ac", fontSize: 21 }}
+                        />
                       </InputAdornment>
                     ),
                   },
@@ -426,7 +466,11 @@ function Login() {
                 mb={1}
               >
                 <Typography
-                  sx={{ fontWeight: 700, fontSize: 13, color: "#34415a" }}
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: 13,
+                    color: "#34415a",
+                  }}
                 >
                   Password
                 </Typography>
@@ -454,31 +498,25 @@ function Login() {
                 disabled={loading}
                 autoComplete="current-password"
                 required
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    height: 54,
-                    borderRadius: 2.5,
-                    bgcolor: "#fbfcff",
-                    "& fieldset": { borderColor: "#e1e7f0" },
-                    "&:hover fieldset": { borderColor: "#9aadd8" },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#2456d9",
-                      borderWidth: 1.5,
-                    },
-                  },
-                }}
+                sx={inputStyles}
                 slotProps={{
                   input: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <LockRoundedIcon sx={{ color: "#8a96ac", fontSize: 21 }} />
+                        <LockRoundedIcon
+                          sx={{ color: "#8a96ac", fontSize: 21 }}
+                        />
                       </InputAdornment>
                     ),
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
-                          aria-label={showPassword ? "Hide password" : "Show password"}
-                          onClick={() => setShowPassword((prev) => !prev)}
+                          aria-label={
+                            showPassword ? "Hide password" : "Show password"
+                          }
+                          onClick={() =>
+                            setShowPassword((prev) => !prev)
+                          }
                           edge="end"
                           disabled={loading}
                         >
