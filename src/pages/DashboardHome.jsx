@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 
 import {
   Avatar,
@@ -55,61 +55,59 @@ const pollingRef = useRef(false);
   // LOAD DATA
   // =====================================================
 
-useEffect(() => {
-  // Load dashboard immediately
-  loadDashboardData();
-
-  // Refresh dashboard every 5 seconds
-  const intervalId = setInterval(() => {
-    loadDashboardData(false);
-  }, 5000);
-
-  // Stop polling when the component unmounts
-  return () => {
-    clearInterval(intervalId);
-  };
-}, []);
-
-
-  const loadDashboardData = async (showLoading = true) => {
-  // Prevent overlapping requests
-  if (pollingRef.current) {
-    return;
-  }
-
-  pollingRef.current = true;
-
-  try {
-    if (showLoading) {
-      setLoading(true);
+  const loadDashboardData = useCallback(async (showLoading = true) => {
+    // Prevent overlapping requests
+    if (pollingRef.current) {
+      return;
     }
 
-    // Fetch the latest profile from the backend
-    const profileData = await getProfile();
-    setProfile(profileData);
+    pollingRef.current = true;
 
-    // Refresh admin dashboard data
-    if (profileData?.role === "ADMIN") {
-      const [dashboardData, recentData] = await Promise.all([
-        getDashboard(),
-        getRecentEmployees(),
-      ]);
+    try {
+      if (showLoading) {
+        setLoading(true);
+      }
 
-      setDashboard(dashboardData);
-      setRecentEmployees(recentData);
+      // Fetch the latest profile from the backend
+      const profileData = await getProfile();
+      setProfile(profileData);
+
+      // Refresh admin dashboard data
+      if (profileData?.role === "ADMIN") {
+        const [dashboardData, recentData] = await Promise.all([
+          getDashboard(),
+          getRecentEmployees(),
+        ]);
+
+        setDashboard(dashboardData);
+        setRecentEmployees(recentData);
+      }
+    } catch (error) {
+      console.error("Dashboard refresh failed:", error);
+      // Keep previously loaded data visible if a refresh fails
+    } finally {
+      pollingRef.current = false;
+
+      if (showLoading) {
+        setLoading(false);
+      }
     }
-  } catch (error) {
-    console.error("Dashboard refresh failed:", error);
+  }, []);
 
-    // Keep previously loaded data visible if a refresh fails
-  } finally {
-    pollingRef.current = false;
+  useEffect(() => {
+    // Load dashboard immediately
+    loadDashboardData();
 
-    if (showLoading) {
-      setLoading(false);
-    }
-  }
-};
+    // Refresh dashboard every 5 seconds
+    const intervalId = setInterval(() => {
+      loadDashboardData(false);
+    }, 5000);
+
+    // Stop polling when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [loadDashboardData]);
 
 
   // =====================================================
