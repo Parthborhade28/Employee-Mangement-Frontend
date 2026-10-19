@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -30,6 +29,39 @@ import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
 import { celebrate } from "../components/ConfettiCelebration";
 import { register } from "../services/authService";
 
+// Shared input styles: ensure typed text is visible.
+const inputStyles = {
+  "& .MuiOutlinedInput-root": {
+    height: 52,
+    borderRadius: 2.5,
+    bgcolor: "#fbfcff",
+    "& fieldset": { borderColor: "#e1e7f0" },
+    "&:hover fieldset": { borderColor: "#9aadd8" },
+    "&.Mui-focused fieldset": {
+      borderColor: "#2456d9",
+      borderWidth: 1.5,
+    },
+  },
+  "& .MuiInputBase-input": {
+    color: "#17233e !important",
+    WebkitTextFillColor: "#17233e",
+    opacity: 1,
+    fontSize: 14,
+    fontWeight: 500,
+    caretColor: "#2456d9",
+    "&::placeholder": {
+      color: "#8a96ac",
+      WebkitTextFillColor: "#8a96ac",
+      opacity: 1,
+    },
+  },
+  "& input:-webkit-autofill": {
+    WebkitTextFillColor: "#17233e",
+    caretColor: "#2456d9",
+    transition: "background-color 9999s ease-in-out 0s",
+  },
+};
+
 function Register() {
   const navigate = useNavigate();
 
@@ -50,11 +82,9 @@ function Register() {
       ...form,
       [e.target.name]: e.target.value,
     });
-
     setError("");
   };
 
-  // Password strength
   const getPasswordStrength = () => {
     const password = form.password;
 
@@ -63,7 +93,6 @@ function Register() {
     }
 
     let strength = 0;
-
     if (password.length >= 6) strength += 25;
     if (/[A-Z]/.test(password)) strength += 25;
     if (/[0-9]/.test(password)) strength += 25;
@@ -82,7 +111,6 @@ function Register() {
 
   const passwordStrength = getPasswordStrength();
 
-  // Register
   const handleRegister = async (e) => {
     e.preventDefault();
 
@@ -159,7 +187,7 @@ function Register() {
         bgcolor: "#101828",
       }}
     >
-      {/* BACKGROUND VIDEO */}
+      {/* Background video */}
       <Box
         component="video"
         autoPlay
@@ -182,7 +210,7 @@ function Register() {
         <source src="/IMG_1446.MOV" type="video/mp4" />
       </Box>
 
-      {/* DARK OVERLAY */}
+      {/* Dark overlay */}
       <Box
         sx={{
           position: "fixed",
@@ -193,7 +221,7 @@ function Register() {
         }}
       />
 
-      {/* MAIN CARD */}
+      {/* Main card */}
       <Paper
         elevation={0}
         sx={{
@@ -213,7 +241,7 @@ function Register() {
           boxShadow: "0 25px 80px rgba(0,0,0,0.3)",
         }}
       >
-        {/* LEFT BRAND PANEL */}
+        {/* Left brand panel */}
         <Box
           sx={{
             display: { xs: "none", md: "flex" },
@@ -227,7 +255,6 @@ function Register() {
             overflow: "hidden",
           }}
         >
-          {/* Decorative circles */}
           <Box
             sx={{
               position: "absolute",
@@ -297,9 +324,8 @@ function Register() {
                   maxWidth: 370,
                 }}
               >
-                Create your account and bring your employee
-                information, team records, and workplace
-                management together in one place.
+                Create your account and bring your employee information,
+                team records, and workplace management together in one place.
               </Typography>
             </Box>
 
@@ -373,7 +399,7 @@ function Register() {
           </Typography>
         </Box>
 
-        {/* RIGHT REGISTRATION PANEL */}
+        {/* Right registration panel */}
         <Box
           sx={{
             display: "flex",
@@ -468,7 +494,7 @@ function Register() {
             )}
 
             <Box component="form" onSubmit={handleRegister}>
-              {/* FULL NAME */}
+              {/* Full name */}
               <Typography
                 sx={{
                   mb: 1,
@@ -490,17 +516,7 @@ function Register() {
                 autoComplete="name"
                 required
                 inputProps={{ minLength: 2, maxLength: 100 }}
-                sx={{
-                  mb: 2.2,
-                  "& .MuiOutlinedInput-root": {
-                    height: 52,
-                    borderRadius: 2.5,
-                    bgcolor: "#fbfcff",
-                    "& fieldset": { borderColor: "#e1e7f0" },
-                    "&:hover fieldset": { borderColor: "#9aadd8" },
-                    "&.Mui-focused fieldset": { borderColor: "#2456d9" },
-                  },
-                }}
+                sx={{ ...inputStyles, mb: 2.2 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -510,7 +526,7 @@ function Register() {
                 }}
               />
 
-              {/* EMAIL */}
+              {/* Email */}
               <Typography
                 sx={{
                   mb: 1,
@@ -532,17 +548,7 @@ function Register() {
                 disabled={loading || success}
                 autoComplete="email"
                 required
-                sx={{
-                  mb: 2.2,
-                  "& .MuiOutlinedInput-root": {
-                    height: 52,
-                    borderRadius: 2.5,
-                    bgcolor: "#fbfcff",
-                    "& fieldset": { borderColor: "#e1e7f0" },
-                    "&:hover fieldset": { borderColor: "#9aadd8" },
-                    "&.Mui-focused fieldset": { borderColor: "#2456d9" },
-                  },
-                }}
+                sx={{ ...inputStyles, mb: 2.2 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -552,7 +558,7 @@ function Register() {
                 }}
               />
 
-              {/* PASSWORD */}
+              {/* Password */}
               <Typography
                 sx={{
                   mb: 1,
@@ -575,16 +581,7 @@ function Register() {
                 autoComplete="new-password"
                 required
                 inputProps={{ minLength: 6 }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    height: 52,
-                    borderRadius: 2.5,
-                    bgcolor: "#fbfcff",
-                    "& fieldset": { borderColor: "#e1e7f0" },
-                    "&:hover fieldset": { borderColor: "#9aadd8" },
-                    "&.Mui-focused fieldset": { borderColor: "#2456d9" },
-                  },
-                }}
+                sx={inputStyles}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -594,8 +591,12 @@ function Register() {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        aria-label={showPassword ? "Hide password" : "Show password"}
-                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
+                        onClick={() =>
+                          setShowPassword((prev) => !prev)
+                        }
                         disabled={loading || success}
                         edge="end"
                       >
@@ -610,7 +611,7 @@ function Register() {
                 }}
               />
 
-              {/* PASSWORD STRENGTH */}
+              {/* Password strength */}
               {form.password && (
                 <Box sx={{ mt: 1.2 }}>
                   <Box
@@ -653,7 +654,7 @@ function Register() {
                 </Box>
               )}
 
-              {/* REGISTER BUTTON */}
+              {/* Register button */}
               <Button
                 type="submit"
                 fullWidth
